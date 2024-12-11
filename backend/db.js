@@ -37,7 +37,7 @@ const dbController = {
 			case 'orders':
 				return orderCollection
 			default:
-				break;
+				return null
 		}
 	},
 
@@ -53,6 +53,10 @@ const dbController = {
 
 	async insertDocuments(collection, documents) {
 		return await this.translateCollection(collection).insertMany(documents)
+	},
+
+	async replaceDocument(collection, query, content) {
+		await this.translateCollection(collection).replaceOne(query, content)
 	},
 	
 	/// updates the provided document
