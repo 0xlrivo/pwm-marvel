@@ -2,6 +2,8 @@ import express from 'express'
 import cors from 'cors'
 import { initMongoConnection } from './db.js'
 import userRoutes from './routes/user.route.cjs'
+import albumRoutes from './routes/album.route.cjs'
+import orderRoutes from './routes/order.route.cjs'
 const port = process.env.PORT || 3000;
 
 const app = express() 

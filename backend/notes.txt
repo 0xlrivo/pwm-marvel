@@ -1,0 +1,4 @@
+La gestione errori fa ancora schifo ma fa nulla per ora
+
+Wrapper Marvel:
+- se non trovo un eroe ritorno un {}

@@ -1,6 +1,27 @@
+import { ObjectId } from 'mongodb'
 import { dbController } from '../db.js'
+import { userController } from './user.controller.js'
 
 const collection = 'orders'
+
+/*
+	order {
+		creatorId:  ObjectId
+		fillerId : ObjectId   (NULL se unfilled)
+		offer: {
+			cards: [] Array,
+			credits: Number
+
+			// what the creator is offering to the filler
+		},
+		request: {
+			cards: [] Array,
+			credits: Number
+
+			// what the creator is requesting the filler
+		}
+	}
+*/
 
 const orderController = {
 
@@ -14,17 +35,17 @@ const orderController = {
 	},
 
 	async getOrderById(id) {
-		return await dbController.findWithQuery(collection, {_id: id})
+		return await dbController.findOneById(collection, id)
 	},
 	
 	// returns all of the orders created by userId
 	async getOrdersCreatedBy(userId) {
-		return await dbController.findWithQuery(collection, {creatorId: userId})
+		return await dbController.findWithQuery(collection, {creatorId: new ObjectId(userId)})
 	},
 	
 	// returns all of the orders filled by userId
 	async getOrdersFilledBy(userId) {
-		return await dbController.findWithQuery(collection, {fillerId: userId})
+		return await dbController.findWithQuery(collection, {fillerId: new ObjectId(userId)})
 	},
 	
 	// creates a new order
@@ -40,13 +61,13 @@ const orderController = {
 			offer: offer,
 			request: request
 		}
-		await dbController.insertDocuments(collection, [order])	
+		await dbController.insertDocument(collection, order)	
 	},
 
 	// fill an order
 	// @param orderId the order id to fill
 	async fillOrder(orderId, fillerId) {
-		const order = await this.getOrderById(orderId)[0]
+		const order = await this.getOrderById(orderId)
 		const creator = await dbController.findWithQuery('users', {_id: order.creatorId})
 		const filler = await dbController.findWithQuery('users', {_id: fillerId})
 
@@ -57,25 +78,9 @@ const orderController = {
 		if (order.creatorId === fillerId) {
 			return;
 		}
-		// check that the filler has enough credits to fullfill the request
-		if (filler.credits < order.request.credits) {
-			return
-		}
-		// check that the owner has enough credits to fulfill the offer
-		if (creator.credits < order.offer.credits) {
-			return;
-		}
-		
-		// decrement credits from both parties
-		creator.credits -= order.offer.credits
-		filler.credits -= order.request.credits
-		
-		// add cards to both parties
-		// @todo
-		
-		// write back changes
-		await dbController.replaceDocument(collection, {_id: order.creatorId}, creator)
-		await dbController.replaceDocument(collection, {_id: fillerId}, filler)
+		// check both have enough credits
+		await userController.checkAndScaleCredits(order.creatorId)
+		await userController.checkAndScaleCredits(fillerId)
 
 	},
 
@@ -83,7 +88,7 @@ const orderController = {
 	// @param callerId the id of the user trying to delete this order
 	// @param orderId the order to delete
 	async deleteOrder(callerId, orderId) {
-		const order = this.getOrderById(orderId)[0]
+		const order = this.getOrderById(orderId)
 		if (order.creatorId !== callerId) {
 			console.log("error invalid owner")
 			return

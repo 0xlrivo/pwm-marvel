@@ -50,7 +50,7 @@ router.put('/editProfile', async(req, res) => {
 })
 
 router.delete('/deleteProfile', async(req, res) => {
-	const userId = req.user._id;
+	const userId = req.user._id; // JWT
 	await userController.deleteUser(userId)
 	res.status(200).json({"message": "user deleted"})
 })

@@ -1,4 +1,5 @@
 import { dbController } from '../db.js'
+import { albumController } from './album.controller.js'
 
 const collection = 'users'
 
@@ -10,15 +11,15 @@ const userController = {
 	},
 
 	async getUserById(id) {
-		return await dbController.findWithQuery(collection, {_id: id})	
+		return await dbController.findOneById(collection, id)	
 	},
 
 	async getUserByUsername(username) {
-		return await dbController.findWithQuery(collection, {username: username})
+		return await dbController.findOneWithQuery(collection, {username: username})
 	},
 
 	async getUserByEmail(email) {
-		return await dbController.findWithQuery(collection, {email: email})
+		return await dbController.findOneWithQuery(collection, {email: email})
 	},
 	
 	/// registers a new user
@@ -28,20 +29,36 @@ const userController = {
 			username: username,
 			email: email,
 			password: password,
-			favoriteHero: favoriteHero
+			favoriteHero: favoriteHero,
+			credits: 100
 		}
-		await dbController.insertDocuments(collection, [document])
+		const op = await dbController.insertDocument(collection, document)
+		await albumController.createAlbum(op._id)
 	},
 	
 	/// updates an existing user
 	async updateUser(id, update) {
-		await dbController.updateDocument(collection, {_id: id}, update)
+		await dbController.updateDocumentById(collection, id, update)
 	},
 
 	async deleteUser(id) {
-		await dbController.deleteDocuments(collection, {_id: id})
+		await dbController.deleteteDocumentById(collection, id)
+	},
+	
+	// checks if such user has enough credits for the operation and then scales them
+	async checkAndScaleCredits(id, requiredCredits) {
+		const user = await this.getUserById(id)
+		console.log(user)
+		if (user.credits >= requiredCredits) {
+			await dbController.updateDocumentById(
+				collection, 
+				id, 
+				{credits: user.credits - requiredCredits}
+			)
+		} else {
+			throw new Error("Not enough credits")
+		}
 	}
-
 }
 
 export { userController }

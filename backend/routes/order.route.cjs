@@ -12,7 +12,7 @@ router.get('/getAllOrders', async(req, res) => {
 	}
 })
 
-router.get('/getAllUnfilledOrder', async(req, res) => {
+router.get('/getAllUnfilledOrders', async(req, res) => {
 	try {
 		const orders = await orderController.gettAllUnfilledOrders()
 		res.status(200).json(orders)
