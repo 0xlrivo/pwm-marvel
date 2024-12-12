@@ -6,11 +6,14 @@ const port = process.env.PORT || 3000;
 
 const app = express() 
 
-app.use(express.json())
-app.use(cors({ origin: '*'}))
+// middlewares configuration
+app.use(express.json())				// JSON body parser
+app.use(cors({ origin: '*'}))		// CORS
 
 // regitser route handlers
-app.use('/api/users', userRoutes)
+app.use('/api/user', userRoutes)
+app.use('/api/album', albumRoutes)
+app.use('/api/order', orderRoutes)
 
 // initialize the MongoDB connection
 await initMongoConnection()
