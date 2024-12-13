@@ -2,3 +2,16 @@ La gestione errori fa ancora schifo ma fa nulla per ora
 
 Wrapper Marvel:
 - se non trovo un eroe ritorno un {}
+
+Possibile refactor:
+- gestione errore db level
+- tornare un Error("Not Found") dai find...
+
+TODO:
+- controllare che negli ordini hai effettivamente le carte che vuoi dare via
+
+TEST JWT:
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NWMwNDFiMDNhYzU1YmE3MTcyYWNhMCIsImFsYnVtSWQiOiI2NzVjMDQxYjAzYWM1NWJhNzE3MmFjYTEiLCJpYXQiOjE3MzQwODM5NDUsImV4cCI6MTczNDE3MDM0NX0.sotJfh3zziFvLz0tNLux_i29uS7CGl1rvHdjs-aoyNg
+
+TEST1 JWT:
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NWMzN2U5MWI3OWM5NGQxZTNjY2ZmMyIsImFsYnVtSWQiOiI2NzVjMzdlOTFiNzljOTRkMWUzY2NmZjQiLCJpYXQiOjE3MzQwOTY5MzQsImV4cCI6MTczNDE4MzMzNH0.OqMovVgxSO0x3M87tbmI0DJKR7lENDuHQZQzqmu7Vs4

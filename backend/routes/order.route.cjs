@@ -32,35 +32,32 @@ router.put('/createOrder', authenticateRoute, async(req, res) => {
 		await orderController.createOrder(creatorId, offer, request)
 		res.status(201).json({"message": "order created"})
 	} catch (err) {
-		console.log(err)
-		res.status(500).json()
+		res.status(500).json({"error": err.message})
 	}
 })
 
 // [PROTECTED]
-router.post('/fillOrder', authenticateRoute, async(req, res) => {
+router.post('/fillOrder/:orderId', authenticateRoute, async(req, res) => {
 	try {
 		const fillerId = req.user.id; // JWT
-		const orderId = req.body.orderId;
+		const orderId = req.params.orderId;
 		await orderController.fillOrder(orderId, fillerId)
 		res.status(200).json({"message": "order filled"})
 	} catch (err) {
-		console.log(err)
-		res.status(500).json()
+		res.status(500).json({"error": err.message})
 	}
 })
 
 
 // [PROTECTED]
-router.delete('/deleteOrder', authenticateRoute, async(req, res) => {
+router.delete('/deleteOrder/:orderId', authenticateRoute, async(req, res) => {
 	try {
 		const callerId = req.user.id; // JWT
-		const orderId = req.body.orderId;
+		const orderId = req.params.orderId;
 		await orderController.deleteOrder(callerId, orderId)
-		res.status(200).json({"message": "order deleeted"})
+		res.status(200).json({"message": "order deleted"})
 	} catch (err) {
-		console.log(err)
-		res.status(500).json()
+		res.status(500).json({"error": err.message})
 	}
 })
 

@@ -38,7 +38,11 @@ const albumController = {
 	async updateAlbum(id, update) {
 		await dbController.updateDocumentById(collection, id, update)
 	},
-	
+
+	async replaceAlbum(id, update) {
+		await dbController.replaceDocumentById(collection, id, update)
+	},
+
 	// opens a packet and accredits the cards to the recipient
 	async openPacket(recipientId) {
 		const recipient = await userController.getUserById(recipientId)

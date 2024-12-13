@@ -71,6 +71,10 @@ const dbController = {
 		await this.translateCollection(collection).replaceOne(query, content)
 	},
 
+	async replaceDocumentById(collection, id, content) {
+		await this.translateCollection(collection).replaceOne({_id: new ObjectId(id)}, content)
+	},
+
 	// inserts multiple documents
 	async insertDocuments(collection, documents) {
 		await this.translateCollection(collection).insertMany(documents)

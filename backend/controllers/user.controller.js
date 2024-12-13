@@ -53,15 +53,7 @@ const userController = {
 			id,
 			{credits: user.credits + credits}
 		)
-	},
-	
-	// checks if a user has enough credits
-	async checkCredits(id, requiredCredits) {
-		const user = await this.getUserById(id)
-		if (user.credits < requiredCredits) {
-			throw new Error("Not enough credits")
-		}
-	},
+	},	
 
 	// checks if such user has enough credits for the operation and then scales them
 	async checkAndScaleCredits(id, requiredCredits) {
