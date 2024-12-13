@@ -1,6 +1,7 @@
 const express = require('express');
 const { albumController } = require('../controllers/album.controller')
 const { marvelController  } = require('../marvel')
+const { authenticateRoute } = require('../middlewares/auth.middleware')
 const router = express.Router()
 
 router.get('/getAlbumOf/:id', async (req, res) => {
@@ -50,7 +51,7 @@ router.get('/getCharactersByIds', async (req, res) => {
 
 router.get('/getAlbumCardsData/:id', async (req, res) => {
 	try {
-		const albumId = req.body.id;
+		const albumId = req.params.id;
 		const cardsData = await albumController.getCardsData(albumId)
 		res.status(200).json(cardsData)
 	} catch (err) {
@@ -59,10 +60,9 @@ router.get('/getAlbumCardsData/:id', async (req, res) => {
 	}
 })
 
-router.post('/openPacket', async (req, res) => {
+router.post('/openPacket', authenticateRoute, async (req, res) => {
 	try {
-		//const owner = req.user._id; // JWT
-		const owner = req.body.id;
+		const owner = req.user.id; // JWT
 		const packetContent = await albumController.openPacket(owner)
 		res.status(200).json(packetContent)
 	} catch (err) {

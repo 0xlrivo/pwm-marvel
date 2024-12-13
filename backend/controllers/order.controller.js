@@ -56,6 +56,10 @@ const orderController = {
 		if (!offer.cards || !offer.credits || !request.cards || !request.credits) {
 			return
 		}
+
+		// check that creator has enough credits and scale those immediately
+		await userController.checkAndScaleCredits(creatorId, offer.credits)
+
 		const order = {
 			creatorId: creatorId,
 			offer: offer,
@@ -68,8 +72,6 @@ const orderController = {
 	// @param orderId the order id to fill
 	async fillOrder(orderId, fillerId) {
 		const order = await this.getOrderById(orderId)
-		const creator = await dbController.findWithQuery('users', {_id: order.creatorId})
-		const filler = await dbController.findWithQuery('users', {_id: fillerId})
 
 		// sanitizations
 		if (order.fillerId !== null) {
@@ -78,9 +80,8 @@ const orderController = {
 		if (order.creatorId === fillerId) {
 			return;
 		}
-		// check both have enough credits
-		await userController.checkAndScaleCredits(order.creatorId)
-		await userController.checkAndScaleCredits(fillerId)
+		
+		// now try to add cards to both
 
 	},
 
@@ -93,7 +94,12 @@ const orderController = {
 			console.log("error invalid owner")
 			return
 		}
-		await dbController.deleteDocuments(collection, {_id: id})
+
+		// refund order creator
+		await userController.addCredits(order.creatorId, order.offer.credits)
+		
+		// remove the order from database
+		await dbController.deleteteDocumentById(collection, id)
 	}
 	
 }

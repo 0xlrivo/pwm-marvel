@@ -1,6 +1,6 @@
 const express = require('express');
 const { userController } = require('../controllers/user.controller')
-
+const { generateJWT, authenticateRoute } = require('../middlewares/auth.middleware')
 const router = express.Router()
 
 router.get('/getAllUsers', async(req, res) => {
@@ -33,9 +33,9 @@ router.post('/login', async(req, res) => {
 	}
 	else {
 		const user = await userController.getUserByUsername(username)
-		if (user && user[0].password === password) {
-			// @todo generate JWT token
-			res.status(200).json()
+		if (user && user.password === password) {
+			const jwt = await generateJWT(user._id)
+			res.status(200).json({"token": jwt})
 		}
 		else {
 			res.status(401).json({"message": "invalid username or password"})
@@ -43,14 +43,14 @@ router.post('/login', async(req, res) => {
 	}
 })
 
-router.put('/editProfile', async(req, res) => {
-	const userId = req.user._id // from JWT
+router.put('/editProfile', authenticateRoute, async(req, res) => {
+	const userId = req.user.id // from JWT
 	await userController.updateUser(userId, {username: req.body.username})
 	res.status(201).json({"message": "user updated"})
 })
 
-router.delete('/deleteProfile', async(req, res) => {
-	const userId = req.user._id; // JWT
+router.delete('/deleteProfile', authenticateRoute, async(req, res) => {
+	const userId = req.user.id; // JWT
 	await userController.deleteUser(userId)
 	res.status(200).json({"message": "user deleted"})
 })

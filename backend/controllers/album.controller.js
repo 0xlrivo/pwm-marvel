@@ -18,8 +18,8 @@ const albumController = {
 	async getCardsData(id) {
 		const album = await this.getAlbumById(id)
 		let result = []
-		for (card in album.cards) {
-			result.push(await marvelController.getCharacterById(card.id))
+		for (let i = 0; i < album.cards.length; i++) {
+			result.push(await marvelController.getCharacterById(album.cards[i]))
 		}
 		return result;
 	},
@@ -47,21 +47,26 @@ const albumController = {
 		// throws if the user doesn't have enough credits
 		await userController.checkAndScaleCredits(recipientId, 10)
 
-		// generate 10 random id
+		// generate 5 random super hero ids and add non-duplicates  to the album
 		let content = []
-		for (let i = 0; i < 10; i++) {
-			content.push(Math.floor(Math.random() * 100000))	
+		for (let i = 0; i < 5; i++) {
+			const id = Math.floor(Math.random() * (1009999 - 1000000 + 1) + 1000000)
+			if (album.cards.indexOf(id) === -1) {
+				// new cards, so add it to the album
+				album.cards.push(id)
+				content.push({"id": id, "isDuplicate": false})
+			} else {
+				// duplicate cards, don't add it
+				content.push({"id": id, "isDuplicate": true})
+			}
 		}
 		
-		// add cards to the user's album @todo
+		// update the album in the database
+		await this.updateAlbum(album._id, album)
 
+		// return the packet's content with duplicate information s for frontend
 		return content
-	},
-	
-	async updateCards(albumId, newCards) {
-		const album = await this.getAlbumById(albumId)
-		// @todo handle duplicate cards accountting
-	}
+	}	
 }
 
 export { albumController }

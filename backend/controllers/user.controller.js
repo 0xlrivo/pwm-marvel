@@ -33,7 +33,7 @@ const userController = {
 			credits: 100
 		}
 		const op = await dbController.insertDocument(collection, document)
-		await albumController.createAlbum(op._id)
+		await albumController.createAlbum(op.insertedId)
 	},
 	
 	/// updates an existing user
@@ -45,10 +45,27 @@ const userController = {
 		await dbController.deleteteDocumentById(collection, id)
 	},
 	
+	// add credits to a specific user
+	async addCreditsTo(id, credits) {
+		const user = await this.getUserById(id)
+		await dbController.updateDocumentById(
+			collection,
+			id,
+			{credits: user.credits + credits}
+		)
+	},
+	
+	// checks if a user has enough credits
+	async checkCredits(id, requiredCredits) {
+		const user = await this.getUserById(id)
+		if (user.credits < requiredCredits) {
+			throw new Error("Not enough credits")
+		}
+	},
+
 	// checks if such user has enough credits for the operation and then scales them
 	async checkAndScaleCredits(id, requiredCredits) {
 		const user = await this.getUserById(id)
-		console.log(user)
 		if (user.credits >= requiredCredits) {
 			await dbController.updateDocumentById(
 				collection, 

@@ -63,7 +63,7 @@ const dbController = {
 	
 	// inserts a single document
 	async insertDocument(collection, document) {
-		await this.translateCollection(collection).insertOne(document)
+		return await this.translateCollection(collection).insertOne(document)
 	},
 	
 	// replace a document

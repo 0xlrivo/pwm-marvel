@@ -1,5 +1,6 @@
 const express = require('express');
 const { orderController } = require('../controllers/order.controller')
+const { authenticateRoute} = require('../middlewares/auth.middleware')
 const router = express.Router()
 
 router.get('/getAllOrders', async(req, res) => {
@@ -23,9 +24,9 @@ router.get('/getAllUnfilledOrders', async(req, res) => {
 })
 
 // [PROTECTED]
-router.put('/createOrder', async(req, res) => {
+router.put('/createOrder', authenticateRoute, async(req, res) => {
 	try {
-		const creatorId = req.user._id; // JWT
+		const creatorId = req.user.id; // JWT
 		const offer = req.body.offer;
 		const request = req.body.request;
 		await orderController.createOrder(creatorId, offer, request)
@@ -37,9 +38,9 @@ router.put('/createOrder', async(req, res) => {
 })
 
 // [PROTECTED]
-router.post('/fillOrder', async(req, res) => {
+router.post('/fillOrder', authenticateRoute, async(req, res) => {
 	try {
-		const fillerId = req.user._id; // JWT
+		const fillerId = req.user.id; // JWT
 		const orderId = req.body.orderId;
 		await orderController.fillOrder(orderId, fillerId)
 		res.status(200).json({"message": "order filled"})
@@ -51,9 +52,9 @@ router.post('/fillOrder', async(req, res) => {
 
 
 // [PROTECTED]
-router.delete('/deleteOrder', async(req, res) => {
+router.delete('/deleteOrder', authenticateRoute, async(req, res) => {
 	try {
-		const callerId = req.user._id; // JWT
+		const callerId = req.user.id; // JWT
 		const orderId = req.body.orderId;
 		await orderController.deleteOrder(callerId, orderId)
 		res.status(200).json({"message": "order deleeted"})

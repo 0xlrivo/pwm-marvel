@@ -43,7 +43,9 @@ const marvelController = {
 			}
 		} catch (err) {
 			// in case this id isn't associated with any hero
-			if (err.name === "TypeError") return {}
+			if (err.name === "TypeError") return {
+				id: -1
+			}
 		}
 	},
 	
