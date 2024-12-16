@@ -50,11 +50,13 @@ const albumController = {
 		
 		// throws if the user doesn't have enough credits
 		await userController.checkAndScaleCredits(recipientId, 10)
+		
+		const generatedCharacters = await marvelController.getRandomCharacters(5)
+		console.log(generatedCharacters)
 
-		// generate 5 random super hero ids and add non-duplicates  to the album
 		let content = []
 		for (let i = 0; i < 5; i++) {
-			const id = Math.floor(Math.random() * (1009999 - 1000000 + 1) + 1000000)
+			let id = generatedCharacters[i].id
 			if (album.cards.indexOf(id) === -1) {
 				// new cards, so add it to the album
 				album.cards.push(id)

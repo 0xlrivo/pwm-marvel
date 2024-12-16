@@ -1,5 +1,7 @@
 import express from 'express'
 import cors from 'cors'
+import swaggerUi from 'swagger-ui-express'
+import swaggerAutogen from 'swagger-autogen'
 import { initMongoConnection } from './db.js'
 import userRoutes from './routes/user.route.cjs'
 import albumRoutes from './routes/album.route.cjs'
@@ -16,6 +18,16 @@ app.use(cors({ origin: '*'}))		// CORS
 app.use('/api/user', userRoutes)
 app.use('/api/album', albumRoutes)
 app.use('/api/order', orderRoutes)
+
+// SwaggerUi setup
+const swaggerDocument = './swagger.json'
+/*swaggerAutogen(swaggerDocument, ['./main.js'], {
+	info: {
+		title: "AFSE Developer Portal",
+		description: "AFSE API documentation"
+	}
+})*/
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
 // initialize the MongoDB connection
 await initMongoConnection()

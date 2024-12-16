@@ -32,6 +32,7 @@ router.put('/createOrder', authenticateRoute, async(req, res) => {
 		await orderController.createOrder(creatorId, offer, request)
 		res.status(201).json({"message": "order created"})
 	} catch (err) {
+		console.error(err)
 		res.status(500).json({"error": err.message})
 	}
 })

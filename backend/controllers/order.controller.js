@@ -61,21 +61,20 @@ const orderController = {
 			await userController.checkAndScaleCredits(creatorId, offer.credits)
 		}
 		
-		const creatorAlbum = albumController.getAlbumOwnedBy(creatorId)
+		const creatorAlbum = await albumController.getAlbumOwnedBy(creatorId)
 
 		// assert creator has the cards he's offering
-		let cards = order.offer.cards
+		let cards = offer.cards
 		for (let i = 0; i < cards.length; i++) {
-			if (creatorAlbum.cards.indexOf(cards[i]) !== -1)
+			if (creatorAlbum.cards.indexOf(cards[i]) === -1) {
 				throw new Error("Cannot offer cards you don't have")
-
+			}
 			// also check that he's not requesting same card
-			if (order.request.cards.indexOf(cards[i]) !== -1) {
+			if (request.cards.indexOf(cards[i]) !== -1) {
 				throw new Error("Cannot request same card you offered")
 			}
 		}
 		
-		// write the order in database
 		const order = {
 			creatorId: creatorId,
 			fillerId: null,

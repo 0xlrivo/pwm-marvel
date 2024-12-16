@@ -82,6 +82,28 @@ const marvelController = {
 			console.log(err)
 			return err;
 		}
+	},
+
+	async getRandomCharacters(count) {
+		try {
+			let result = []
+			for (let i = 0; i < count; i++) {
+				let resp = await baseMarvelRequest('/characters', [
+					{'offset': Math.floor(Math.random() * 2000)},
+					{'limit' : 1}
+				])
+				resp = resp.data.results[0]
+				result.push({
+					id: resp.id,
+					name: resp.name,
+					description: resp.description,
+					thumbnail: resp.thumbnail
+				})
+			}
+			return result
+		} catch (err) {
+			return err
+		}
 	}
 }
 

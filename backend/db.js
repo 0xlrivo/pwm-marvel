@@ -23,8 +23,15 @@ async function initMongoConnection() {
 		userCollection = db.collection('users')
 		albumCollection = db.collection('albums')
 		orderCollection = db.collection('orders')
+
+		// for the user collection we want username and email to be unique
+		// we can achieve this by creating an index
+		userCollection.createIndex( { username: 1 }, { unique: true } )
+		userCollection.createIndex( { email: 1 }, { unique: true } )
+		
 	}
 }
+
 
 const dbController = {
 
