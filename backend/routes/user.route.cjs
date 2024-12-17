@@ -8,7 +8,7 @@ router.get('/getAllUsers', async(req, res) => {
 })
 
 router.get('/getUserById/:id', async(req, res) => {
-	res.json(await userController.getUserById(id))
+	res.json(await userController.getUserById(req.params.id))
 })
 
 router.post('/register', async(req, res) => {
