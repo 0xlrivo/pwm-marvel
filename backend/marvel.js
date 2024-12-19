@@ -89,9 +89,10 @@ const marvelController = {
 			let result = []
 			for (let i = 0; i < count; i++) {
 				let resp = await baseMarvelRequest('/characters', [
-					{'offset': Math.floor(Math.random() * 2000)},
+					{'offset': Math.floor(Math.random() * 1500)},
 					{'limit' : 1}
 				])
+				console.log(resp.data.results)
 				resp = resp.data.results[0]
 				result.push({
 					id: resp.id,

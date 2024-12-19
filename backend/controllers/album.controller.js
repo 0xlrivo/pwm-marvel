@@ -45,10 +45,10 @@ const albumController = {
 
 	// opens a packet and accredits the cards to the recipient
 	async openPacket(recipientId) {
-		const recipient = await userController.getUserById(recipientId)
+		//const recipient = await userController.getUserById(recipientId)
 		const album = await this.getAlbumOwnedBy(recipientId)
 		
-		// throws if the user doesn't have enough credits
+		// throws if the user doesn't have enough credits @todo refactor to scale this at the end if the rest fails
 		await userController.checkAndScaleCredits(recipientId, 10)
 		
 		const generatedCharacters = await marvelController.getRandomCharacters(5)

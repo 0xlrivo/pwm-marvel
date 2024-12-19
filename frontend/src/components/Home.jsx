@@ -14,36 +14,80 @@ export default function Home() {
     }
 
     // calls the backend API to fetch data from the currently logged user
-    const fetchUserData = async () => {
-        console.log("called")
-        const jwt = parseJwt()
+    const fetchUserData = async (id) => {
         const options = {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
             },
         }
-        const resp = await fetch('http://localhost:3000/api/user/getUserById/' + jwt.id)
+        const resp = await fetch('http://localhost:3000/api/user/getUserById/' + id, options)
         if (resp.ok) {
             const content = await resp.json()
-            setCredits(content.credits)
+            setUserData(content)
         }
+    }
+
+    const fetchAlbumCards = async (albumId) => {
+        const options = {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+            },
+        }
+        const resp = await fetch(`http://localhost:3000/api/album/getAlbumCardsData/${albumId}`, options)
+        if (resp.ok) {
+            const content = await resp.json()
+            setPagination({
+                curPage: 0,
+                numPages: Math.ceil(content.length / 10),
+                cards: content ? content : []
+            })
+        }
+    }
+
+    const changeCurPage = (c) => {
+        const p = pagination;
+        setPagination({
+            curPage: c,
+            numPages: p.numPages,
+            cards: p.cards
+        })
+        console.log("ppp")
     }
 
     // STATE
     const [isLogged] = useOutletContext()
-    const [credits, setCredits] = useState(0)
+    const [userData, setUserData] = useState({})
+    const [pagination, setPagination] = useState({
+        curPage: 0,
+        numPages: 1,
+        cards: []
+    })
 
     // EFFECT
     useEffect(() => {
-        fetchUserData()
+        const jwt = parseJwt()
+        if (!jwt) return
+        fetchUserData(jwt.id)
+        fetchAlbumCards(jwt.albumId)
     }, [])
 
     return (
         <>
-            <h1>Album of </h1>
-            <AlbumViewer albumId={parseJwt().albumId}/>
-            <HomeControlBar isLogged={isLogged} credits={credits}/>
+            <h1>Album of {userData ? userData.username : ""}</h1>
+
+            <AlbumViewer 
+                albumId={parseJwt().albumId} 
+                pagination={pagination}
+            />
+
+            <HomeControlBar 
+                isLogged={isLogged} 
+                credits={userData ? userData.credits : 0} 
+                pagination={pagination}
+                changePage={changeCurPage}
+            />
         </>
     )
 }

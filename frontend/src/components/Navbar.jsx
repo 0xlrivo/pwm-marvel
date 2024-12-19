@@ -9,10 +9,10 @@ export default function Navbar() {
       </a>
 
       <ul className="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-        <li><Link href="/" className="nav-link px-2 text-white">HOME</Link></li>
-        <li><Link href="/packets" className="nav-link px-2 text-white">PACKETS</Link></li>
-        <li><Link href="/trade" className="nav-link px-2 text-white">TRADE</Link></li>
-        <li><Link href="/profile" className="nav-link px-2 text-white">PROFILE</Link></li>
+        <li><Link to="/" className="nav-link px-2 text-white">HOME</Link></li>
+        <li><Link to="/shop" className="nav-link px-2 text-white">SHOP</Link></li>
+        <li><Link to="/trade" className="nav-link px-2 text-white">TRADE</Link></li>
+        <li><Link to="/profile" className="nav-link px-2 text-white">PROFILE</Link></li>
       </ul>
 
       <div className="col-md-3 text-end">
