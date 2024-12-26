@@ -5,6 +5,7 @@ export default function LoginPage() {
     const handleSubmit = async (e) => {
         e.preventDefault()
         
+        // make a request to the login endpoint, if successfull is will return a JWT token
         const options = {
             method: 'POST',
             headers: {
@@ -20,12 +21,18 @@ export default function LoginPage() {
         const resp = await fetch('http://localhost:3000/api/user/login', options)
         if (resp.ok) {
            const content = await resp.json()
+
+           // save the auth JWT token in local storage
            localStorage.setItem('auth-token', content.token)
+
+           // redirect to the home page to issue a reload
+           window.location.href = 'http://localhost:5173/'
         } else {
-            console.log("LOGIN FAILED")
+            console.error("LOGIN FAILED")
         }
     }
 
+    // the React way of handling forms makes use of component state
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
 

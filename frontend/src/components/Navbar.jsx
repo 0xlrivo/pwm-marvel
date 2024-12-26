@@ -1,6 +1,12 @@
 import { Link } from 'react-router-dom'
 
-export default function Navbar() {
+export default function Navbar({ isLogged }) {
+  
+  const handleLogout = () => {
+    localStorage.removeItem('auth-token')
+    window.location.href = 'http://localhost:5173/'
+  }
+  
   return (
     <div className="bg-dark fixed-top d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-0 border-bottom">
       <a href="/" className="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-white text-decoration-none">
@@ -16,8 +22,14 @@ export default function Navbar() {
       </ul>
 
       <div className="col-md-3 text-end">
-        <button type="button" className="btn btn-outline-primary me-2">Login</button>
-        <button type="button" className="btn btn-primary">Sign-up</button>
+        {
+          isLogged
+            ? <button type="button" className="btn btn-danger" onClick={handleLogout} >Logout</button>
+            : <span>
+                <button type="button" className="btn btn-warning">Sign-up</button>
+                <button type="button" className="btn btn-primary"><Link to="/login">Login</Link></button>
+              </span>
+        }
       </div>
     </div>
   )

@@ -1,6 +1,6 @@
 export default function HomeControlBar({ isLogged, credits, pagination, changePage }) {
-    
-    const buyCredits = async() => {
+
+    const buyCredits = async () => {
         // API call
         console.log("hi")
     }
@@ -10,11 +10,11 @@ export default function HomeControlBar({ isLogged, credits, pagination, changePa
         for (let i = 0; i < pagination.numPages; i++) {
             if (i == pagination.curPage) {
                 res.push(
-                    <button type="button" className="btn btn-primary" onClick={() => changePage(i)}>{i+1}</button>
+                    <button type="button" className="btn btn-primary" onClick={() => changePage(i)}>{i + 1}</button>
                 )
             } else {
                 res.push(
-                    <button className="btn btn-secondary" onClick={() => changePage(i)}>{i+1}</button>
+                    <button className="btn btn-secondary" onClick={() => changePage(i)}>{i + 1}</button>
                 )
             }
         }
@@ -25,13 +25,11 @@ export default function HomeControlBar({ isLogged, credits, pagination, changePa
         <div className="navbar navbar-expand navbar-dark bg-dark fixed-bottom d-flex flex-wrap align-items-center justify-content-center">
             <p className="text-bold text-white">{credits}</p>
 
-            <button type="button" className="btn btn-warning" onClick={buyCredits}>Buy Credits</button>
+            <div className="bnt-group">
+                {renderPaginationController()}
+            </div>
 
-            <nav>
-                <div className="bnt-group">
-                    {renderPaginationController()}
-                </div>
-            </nav>
+            <button type="button" className="btn btn-warning" onClick={buyCredits}>Buy Credits</button>
 
         </div>
     )

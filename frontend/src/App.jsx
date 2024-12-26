@@ -1,23 +1,43 @@
 import { Routes, Route, BrowserRouter } from 'react-router-dom'
 import Layout from './components/Layout.jsx'
 import Home from './components/Home.jsx'
-import Profile from './components/Profile.jsx'
 import ShopPage from './pages/ShopPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import TradePage from './pages/TradePage.jsx'
+import { useState } from 'react'
+import ProfilePage from './pages/ProfilePage.jsx'
 
-function App() {
+export default function App() {
+	
+	// GLOBAL APPLICATION STATE (that all pages share)
+	
+	// weather or not the user is logged
+	const [isLogged, setIsLogged] = useState(localStorage.getItem('auth-token') ? true : false)
 
-	// @note user data e cards STATE vanno qui, dato che sono globali per tutta l'applicazione
-	// in questo modo, posso caricare le cards una volta sola dal backend, e riusarle sia per album sia per trades
-	// ovviamente, quando apro un pacchetto / fillo un ordine le cards verranno cambiate (@todo vedere qui come fare a ricaricare lo stato)
+	// User data
+	const [user, setUser] = useState({})
+
+	// Album cards and display settings
+	const [pagination, setPagination] = useState({
+		curPage: 0,
+		numPages: 1,
+		cards: []
+	})
 
 	return (
 		<BrowserRouter>
 			<Routes>
-				<Route path='/' element={<Layout/>}>
+				<Route path='/' element={
+						<Layout
+							isLogged={isLogged}
+							user={user}
+							setUser={setUser}
+							pagination={pagination}
+							setPagination={setPagination}
+						/>
+					}>
 					<Route index element={<Home/>}/>
-					<Route path='profile' element={<Profile/>}/>
+					<Route path='profile' element={<ProfilePage/>}/>
 					<Route path='shop' element={<ShopPage/>}/>
 					<Route path='trade' element={<TradePage/>}/>
 					<Route path='login' element={<LoginPage/>}/>
@@ -26,5 +46,3 @@ function App() {
 		</BrowserRouter>
 	)
 }
-
-export default App

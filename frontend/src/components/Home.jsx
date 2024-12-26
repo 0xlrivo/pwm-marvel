@@ -24,7 +24,7 @@ export default function Home() {
         const resp = await fetch('http://localhost:3000/api/user/getUserById/' + id, options)
         if (resp.ok) {
             const content = await resp.json()
-            setUserData(content)
+            setUser(content)
         }
     }
 
@@ -57,13 +57,7 @@ export default function Home() {
     }
 
     // STATE
-    const [isLogged] = useOutletContext()
-    const [userData, setUserData] = useState({})
-    const [pagination, setPagination] = useState({
-        curPage: 0,
-        numPages: 1,
-        cards: []
-    })
+    const [isLogged, user, setUser, pagination, setPagination] = useOutletContext()
 
     // EFFECT
     useEffect(() => {
@@ -74,20 +68,27 @@ export default function Home() {
     }, [])
 
     return (
-        <>
-            <h1>Album of {userData ? userData.username : ""}</h1>
+        <div>
+            {
+                isLogged
+                    ? <>
+                        <h1>Album of {user ? user.username : ""}</h1>
 
-            <AlbumViewer 
-                albumId={parseJwt().albumId} 
-                pagination={pagination}
-            />
+                        <AlbumViewer
+                            albumId={parseJwt().albumId}
+                            pagination={pagination}
+                        />
 
-            <HomeControlBar 
-                isLogged={isLogged} 
-                credits={userData ? userData.credits : 0} 
-                pagination={pagination}
-                changePage={changeCurPage}
-            />
-        </>
+                        <HomeControlBar
+                            isLogged={isLogged}
+                            credits={user ? user.credits : 0}
+                            pagination={pagination}
+                            changePage={changeCurPage}
+                        />
+                    </>
+                    : <h1>Login first to view your album</h1>
+            }
+
+        </div>
     )
 }

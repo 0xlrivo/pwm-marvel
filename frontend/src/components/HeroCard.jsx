@@ -1,13 +1,9 @@
 export default function HeroCard({ id, name, description, imgSrc }) {
 	return (
-		<div className="card border-danger h-100">
+		<div key={id} className="card border-danger h-100">
 			<img src={imgSrc} className="hero-card-img" alt="hero image"></img>
-			<div className="card-body">
+			<div className="card-footer text-center text-bold text-danger border-0">
 				<h5 className="card-title">{name}</h5>
-				<p className="card-text">{description}</p>
-			</div>
-			<div className="card-footer">
-				<button type="button" className="btn btn-primary">Info</button>
 			</div>
 		</div>
 	)

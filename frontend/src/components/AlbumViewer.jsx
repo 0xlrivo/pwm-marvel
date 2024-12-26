@@ -3,7 +3,7 @@ import HeroCard from "./HeroCard"
 export default function AlbumViewer({ albumId, pagination }) {
 
     return (
-        <div className="row row-cols-1 row-cols-md-5 g-4" style={{ marginBottom: '5em' }}>
+        <div className="row row-cols-1 row-cols-md-5 g-4">
             {
                 pagination
                     ? pagination.cards.slice(

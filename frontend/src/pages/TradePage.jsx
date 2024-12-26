@@ -1,15 +1,9 @@
 import { useEffect, useState } from "react"
+import { useOutletContext } from "react-router-dom";
 import TradeControlBar from "../components/TradeControlBar"
 import TradeRow from "../components/TradeRow"
 
 export default function TradePage() {
-
-    const parseJwt = () => {
-        const jwt = localStorage.getItem('auth-token')
-        if (!jwt) return null
-        const payload = atob(jwt.split('.')[1])
-        return JSON.parse(payload)
-    }
 
     const fetchUnfilledTrades = async () => {
         const options = {
@@ -21,12 +15,11 @@ export default function TradePage() {
         const resp = await fetch('http://localhost:3000/api/order/getAllUnfilledOrders', options)
         if (resp.ok) {
             const content = await resp.json()
-            console.log(content)
             setTrades(content)
-            console.log(trades)
         }
     }
 
+    const [isLogged, user, setUser, pagination, setPagination] = useOutletContext()
     const [trades, setTrades] = useState([])
 
     useEffect(() => {
@@ -39,10 +32,10 @@ export default function TradePage() {
             <table className="table table-hover table-striped">
                 <thead>
                     <tr>
-                        <th scope="col">#</th>
+                        <th scope="col">Creator</th>
                         <th scope="col">Offer</th>
                         <th scope="col">Request</th>
-                        <th scope="col">Options</th>
+                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -50,7 +43,8 @@ export default function TradePage() {
                         trades.map((t, idx) => {
                             return (
                                 <TradeRow key={idx}
-                                    idx={idx}
+                                    isOwned={user._id == t.creatorId} // wheater or not the logged user owns this trade
+                                    creatorId={t.creatorId}
                                     tradeId={t._id}
                                     offer={t.offer}
                                     request={t.request}
@@ -60,7 +54,7 @@ export default function TradePage() {
                     }
                 </tbody>
             </table>
-            <TradeControlBar />
+            <TradeControlBar user={user} cards={pagination.cards}/>
         </>
     )
 

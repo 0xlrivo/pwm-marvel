@@ -1,0 +1,225 @@
+import { useState } from "react";
+
+export default function CreateTradeModal({ credits, cards }) {
+  const appendCard = (isIn, cardId, cardName) => {
+    if (isIn) {
+      // check for duplicate entries
+      if (cardsOut.findIndex((i) => i.id === cardId) === -1)
+        setCardsOut((prev) => [...prev, { id: cardId, name: cardName }]);
+    } else {
+      if (cardsIn.findIndex((i) => i.id === cardId) === -1)
+        setCardsIn((prev) => [...prev, { id: cardId, name: cardName }]);
+    }
+  };
+
+  const clearForm = () => {
+    setCreditsOut(0);
+    setCreditsIn(0);
+    setCardsOut([]);
+    setCardsIn([]);
+    setCardsInDL([]);
+  };
+
+  const searchHeroByNames = async (query) => {
+    const options = {
+      method: "GET",
+      headers: {
+        Accept: `application/json`,
+      },
+    };
+
+    let response = await fetch(
+      "http://localhost:3000/api/album/getCharactersByName/" + query,
+      options
+    );
+    if (response.ok) {
+      response = await response.json();
+      setCardsInDL(
+        response.map((i) => {
+          return { id: i.id, name: i.name };
+        })
+      );
+    } else {
+      console.error(await response.json());
+    }
+  };
+
+  const handleForm = async (e) => {
+    e.preventDefault();
+
+    const options = {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        offer: {
+          cards: cardsOut.map((i) => {
+            return i.id;
+          }),
+          credits: creditsOut,
+        },
+        request: {
+          cards: cardsIn.map((i) => {
+            return i.id;
+          }),
+          credits: creditsIn,
+        },
+      }),
+    };
+
+    console.log(options.body);
+
+    const response = await fetch(
+      `http://localhost:3000/api/order/createOrder`,
+      options
+    );
+    if (response.ok) {
+      console.log("Trade Created");
+    } else {
+      console.error(await response.json());
+    }
+  };
+
+  const [creditsOut, setCreditsOut] = useState(0);
+  const [creditsIn, setCreditsIn] = useState(0);
+  const [cardsOut, setCardsOut] = useState([]);
+  const [cardsIn, setCardsIn] = useState([]);
+
+  const [cardsInDL, setCardsInDL] = useState([]);
+
+  return (
+    <div
+      className="modal fade"
+      id="createTradeModal"
+      tabIndex="-1"
+      aria-labelledby="createTradeModalLabel"
+      aria-hidden="true"
+    >
+      <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <form onSubmit={handleForm}>
+          <div className="modal-content">
+            <div className="modal-header">
+              <h1 className="modal-title fs-5" id="createTradeModalLabel">
+                Create Trade
+              </h1>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+
+            <div className="modal-body">
+              <div className="mb-3">
+                <label htmlFor="creditsOutLabel" className="form-label">
+                  Credits Out (max {credits})
+                </label>
+                <input
+                  type="number"
+                  className="form-control"
+                  id="creditsOut"
+                  aria-describedby="creditsOutLabel"
+                  value={creditsOut}
+                  onChange={(e) => setCreditsOut(e.target.value)}
+                  min={0}
+                  max={credits}
+                />
+              </div>
+
+              <div className="mb-3">
+                <label htmlFor="cardsOut" className="form-label">
+                  Cards Out (from your album)
+                </label>
+                {cardsOut.length > 0 ? (
+                  cardsOut.map((c) => {
+                    return <p>{c.name}</p>;
+                  })
+                ) : (
+                  <p>None</p>
+                )}
+                <select
+                  className="form-control"
+                  onChange={(e) => {
+                    const x = e.target.value.split("/");
+                    appendCard(true, x[0], x[1]);
+                  }}
+                >
+                  {cards.map((t) => {
+                    return (
+                      <option value={`${t.id}/${t.name}`}>{t.name}</option>
+                    );
+                  })}
+                </select>
+              </div>
+
+              <div className="mb-3">
+                <label htmlFor="creditsInLabel" className="form-label">
+                  Credits In
+                </label>
+                <input
+                  type="number"
+                  className="form-control"
+                  id="creditsIn"
+                  aria-describedby="creditsInLabel"
+                  value={creditsIn}
+                  onChange={(e) => setCreditsIn(e.target.value)}
+                  min={0}
+                />
+              </div>
+
+              <div className="mb-3">
+                <label htmlFor="cardsIn" className="form-label">
+                  Cards In
+                </label>
+                {cardsIn.length > 0 ? (
+                  cardsIn.map((c) => {
+                    return <p>{c.name}</p>;
+                  })
+                ) : (
+                  <p>None</p>
+                )}
+                <input
+                  type="text"
+                  list="cardsInDataList"
+                  className="form-control"
+                  onChange={(e) => searchHeroByNames(e.target.value)}
+                />
+                <datalist
+                  id="cardsInDataList"
+                  onChange={(e) => {
+                    console.log(e.target.value);
+                    const x = e.target.value.split("/");
+                    appendCard(false, x[0], x[1]);
+                  }}
+                >
+                  {cardsInDL.map((c) => {
+                    return (
+                      <option value={`${c.id}/${c.name}`}>{c.name}</option>
+                    );
+                  })}
+                </datalist>
+              </div>
+            </div>
+
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-danger"
+                data-bs-dismiss="modal"
+                onClick={() => clearForm()}
+              >
+                Close
+              </button>
+              <button type="submit" className="btn btn-success">
+                Create
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
