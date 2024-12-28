@@ -43,6 +43,12 @@ router.post('/login', async(req, res) => {
 	}
 })
 
+router.put('/buyCredits', authenticateRoute, async(req, res) => {
+	const userId = req.user.id
+	await userController.addCreditsTo(userId, Math.floor(Math.random() * (6-1) + 1)) // random credits between 1 and 5
+	res.status(201).json({"message": "credits added"})
+})
+
 router.put('/editProfile', authenticateRoute, async(req, res) => {
 	const userId = req.user.id // from JWT
 	await userController.updateUser(userId, {username: req.body.username})

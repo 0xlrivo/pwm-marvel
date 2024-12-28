@@ -29,7 +29,7 @@ export default function TradePage() {
     return (
         <>
             <h1>Trade</h1>
-            <table className="table table-hover table-striped">
+            <table className="table table-responsive table-hover table-striped">
                 <thead>
                     <tr>
                         <th scope="col">Creator</th>

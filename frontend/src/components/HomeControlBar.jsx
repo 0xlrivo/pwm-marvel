@@ -1,8 +1,19 @@
 export default function HomeControlBar({ isLogged, credits, pagination, changePage }) {
 
     const buyCredits = async () => {
-        // API call
-        console.log("hi")
+        const options = {
+            method: "PUT",
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "http://localhost:5173",
+              "Access-Control-Allow-Credentials": "true"
+            }
+        }
+        const response = await fetch('http://localhost:3000/api/user/buyCredits', options)
+        if (response.ok) {
+            console.log("credits added")
+        }
     }
 
     const renderPaginationController = () => {

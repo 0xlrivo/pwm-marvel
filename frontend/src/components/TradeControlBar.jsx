@@ -1,9 +1,6 @@
 import CreateTradeModal from "./CreateTradeModal";
 
 export default function TradePage({ user, cards }) {
-  // @todo muovere cards allo stato globale dell'applicazione cosi le ho a disposizione qui e non mi serve un'altra fetch
-  // dal mio album
-  const createOrder = async () => {};
 
   return (
     <>

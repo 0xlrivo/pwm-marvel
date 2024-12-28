@@ -1,7 +1,9 @@
 import { useState } from "react";
 
 export default function CreateTradeModal({ credits, cards }) {
+  
   const appendCard = (isIn, cardId, cardName) => {
+    cardId = parseInt(cardId, 10)
     if (isIn) {
       // check for duplicate entries
       if (cardsOut.findIndex((i) => i.id === cardId) === -1)
@@ -24,6 +26,7 @@ export default function CreateTradeModal({ credits, cards }) {
     const options = {
       method: "GET",
       headers: {
+        Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
         Accept: `application/json`,
       },
     };
@@ -52,31 +55,31 @@ export default function CreateTradeModal({ credits, cards }) {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
         "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "http://localhost:5173",
+        "Access-Control-Allow-Credentials": "true"
       },
       body: JSON.stringify({
         offer: {
           cards: cardsOut.map((i) => {
-            return i.id;
+            return parseInt(i.id, 10);
           }),
-          credits: creditsOut,
+          credits: parseInt(creditsOut, 10),
         },
         request: {
           cards: cardsIn.map((i) => {
-            return i.id;
+            return parseInt(i.id, 10);
           }),
-          credits: creditsIn,
+          credits: parseInt(creditsIn, 10),
         },
       }),
     };
-
-    console.log(options.body);
 
     const response = await fetch(
       `http://localhost:3000/api/order/createOrder`,
       options
     );
     if (response.ok) {
-      console.log("Trade Created");
+      window.location.href = 'http://localhost:5173/' // @todo find a way to avoid reloading all cards
     } else {
       console.error(await response.json());
     }
@@ -182,6 +185,7 @@ export default function CreateTradeModal({ credits, cards }) {
                   <p>None</p>
                 )}
                 <input
+                  id="cardOutTxt"
                   type="text"
                   list="cardsInDataList"
                   className="form-control"
@@ -189,18 +193,17 @@ export default function CreateTradeModal({ credits, cards }) {
                 />
                 <datalist
                   id="cardsInDataList"
-                  onChange={(e) => {
-                    console.log(e.target.value);
-                    const x = e.target.value.split("/");
-                    appendCard(false, x[0], x[1]);
-                  }}
                 >
                   {cardsInDL.map((c) => {
                     return (
-                      <option value={`${c.id}/${c.name}`}>{c.name}</option>
+                      <option key={c.id} value={`${c.id}/${c.name}`}>{c.name}</option>
                     );
                   })}
                 </datalist>
+                <button type="button" className="btn btn-warning" onClick={() => {
+                  const card = (document.getElementById('cardOutTxt').value).split('/')
+                  appendCard(false, card[0], card[1])
+                }}>ADD</button>
               </div>
             </div>
 

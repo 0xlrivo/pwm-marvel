@@ -11,8 +11,12 @@ const port = process.env.PORT || 3000;
 const app = express() 
 
 // middlewares configuration
+app.use(
+	cors({ 
+		origin: 'http://localhost:5173'
+	})
+)		// CORS
 app.use(express.json())				// JSON body parser
-app.use(cors({ origin: '*'}))		// CORS
 
 // regitser route handlers
 app.use('/api/user', userRoutes)

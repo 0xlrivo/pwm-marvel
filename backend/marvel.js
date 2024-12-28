@@ -67,7 +67,8 @@ const marvelController = {
 	// fetch all of the characthers with the mathcing name
 	async getCharactersByName(name) {
 		try {
-			const resp = await baseMarvelRequest('/characters', [{'name': name}])
+			const resp = await baseMarvelRequest('/characters', [{'nameStartsWith': name}, {'limit': 10}])
+			console.log(resp)
 			let result = []
 			for (const i of resp.data.results) {
 				result.push({
