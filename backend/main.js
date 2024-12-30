@@ -15,13 +15,9 @@ app.use(
 	cors({ 
 		origin: 'http://localhost:5173'
 	})
-)		// CORS
-app.use(express.json())				// JSON body parser
-
-// regitser route handlers
-app.use('/api/user', userRoutes)
-app.use('/api/album', albumRoutes)
-app.use('/api/order', orderRoutes)
+)
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json())
 
 // SwaggerUi setup
 const swaggerDocument = './swagger.json'
@@ -32,6 +28,11 @@ const swaggerDocument = './swagger.json'
 	}
 })*/
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
+
+// regitser route handlers
+app.use('/api/user', userRoutes)
+app.use('/api/album', albumRoutes)
+app.use('/api/order', orderRoutes)
 
 // initialize the MongoDB connection
 await initMongoConnection()

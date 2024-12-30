@@ -28,6 +28,23 @@ export default function TradeRow({
     }
   };
 
+  const fetchTradeData = async(cards, setter) => {
+    const options = {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        "ids": cards
+      })
+    }
+    let response = await fetch("http://localhost:3000/api/album/getCharactersByIds", options)
+    if (response.ok) {
+      response = await response.json()
+      setter(response.map((i) => `${i.thumbnail.path}.${i.thumbnail.extension}`))
+    }
+  }
+
   const fetchCreatorUsername = async () => {
     const options = {
       method: "GET",
@@ -40,30 +57,8 @@ export default function TradeRow({
       options
     );
     if (response.ok) {
-      const user = await response.json();
+      const user = await response.json()
       setCreator(user.username);
-    }
-  };
-
-  const fetchCardsData = async (isOffer, cards) => {
-    const options = {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-      },
-      body: JSON.stringify({
-        ids: cards,
-      }),
-    };
-    const response = await fetch(
-      `http://localhost:3000/api/album/getCharactersByIds`,
-      options
-    );
-    if (response.ok) {
-      const r = await response.json();
-      isOffer ? setOfferCards(r) : setRequestCards(r);
-    } else {
-      console.error(await response.json());
     }
   };
 
@@ -79,48 +74,38 @@ export default function TradeRow({
       options
     );
     if (response.ok) {
-      window.location.href = "http://localhost:5173/";
+      window.location.href = "http://localhost:5173/trade";
     } else {
       console.error(response.json());
     }
   };
 
   const [creator, setCreator] = useState("");
-  const [offerCards, setOfferCards] = useState([]);
-  const [requestCards, setRequestCards] = useState([]);
+  const [offerData, setOfferData] = useState([])
+  const [requestData, setRequestData] = useState([])
 
   useEffect(() => {
     fetchCreatorUsername();
-    //fetchCardsData(true, offer.cards);
-    //fetchCardsData(false, request.cards);
+    fetchTradeData(offer.cards, setOfferData)
+    fetchTradeData(request.cards, setRequestData)
   }, []);
 
   return (
     <tr>
       <th scope="row">{creator}</th>
       <td>
-        {offerCards.map((c, idx) => {
-          return (
-            <img
-              key={idx}
-              src={`${c.thumbnail.path}.${c.thumbnail.extension}`}
-              width={200}
-              height={200}
-            />
-          );
-        })}
+        {
+          offerData.map((o, idx) => {
+            return <img key={idx} width={200} height={200} src={o}/>
+          })
+        }
       </td>
       <td>
-        {requestCards.map((c, idx) => {
-          return (
-            <img
-              key={idx}
-              src={`${c.thumbnail.path}.${c.thumbnail.extension}`}
-              width={200}
-              height={200}
-            />
-          );
-        })}
+      {
+          requestData.map((o, idx) => {
+            return <img key={idx} width={200} height={200} src={o}/>
+          })
+        }
       </td>
       <td>
         {isOwned ? (

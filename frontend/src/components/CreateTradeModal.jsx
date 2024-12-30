@@ -1,9 +1,8 @@
 import { useState } from "react";
 
 export default function CreateTradeModal({ credits, cards }) {
-  
   const appendCard = (isIn, cardId, cardName) => {
-    cardId = parseInt(cardId, 10)
+    cardId = parseInt(cardId, 10);
     if (isIn) {
       // check for duplicate entries
       if (cardsOut.findIndex((i) => i.id === cardId) === -1)
@@ -56,7 +55,7 @@ export default function CreateTradeModal({ credits, cards }) {
         Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "http://localhost:5173",
-        "Access-Control-Allow-Credentials": "true"
+        "Access-Control-Allow-Credentials": "true",
       },
       body: JSON.stringify({
         offer: {
@@ -74,12 +73,14 @@ export default function CreateTradeModal({ credits, cards }) {
       }),
     };
 
+    console.log(options.body);
+
     const response = await fetch(
       `http://localhost:3000/api/order/createOrder`,
       options
     );
     if (response.ok) {
-      window.location.href = 'http://localhost:5173/' // @todo find a way to avoid reloading all cards
+      window.location.href = "http://localhost:5173/trade"; 
     } else {
       console.error(await response.json());
     }
@@ -101,20 +102,19 @@ export default function CreateTradeModal({ credits, cards }) {
       aria-hidden="true"
     >
       <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <form onSubmit={handleForm}>
-          <div className="modal-content">
-            <div className="modal-header">
-              <h1 className="modal-title fs-5" id="createTradeModalLabel">
-                Create Trade
-              </h1>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-
+        <div className="modal-content">
+          <div className="modal-header">
+            <h1 className="modal-title fs-5" id="createTradeModalLabel">
+              Create Trade
+            </h1>
+            <button
+              type="button"
+              className="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <form onSubmit={handleForm}>
             <div className="modal-body">
               <div className="mb-3">
                 <label htmlFor="creditsOutLabel" className="form-label">
@@ -191,19 +191,27 @@ export default function CreateTradeModal({ credits, cards }) {
                   className="form-control"
                   onChange={(e) => searchHeroByNames(e.target.value)}
                 />
-                <datalist
-                  id="cardsInDataList"
-                >
+                <datalist id="cardsInDataList">
                   {cardsInDL.map((c) => {
                     return (
-                      <option key={c.id} value={`${c.id}/${c.name}`}>{c.name}</option>
+                      <option key={c.id} value={`${c.id}/${c.name}`}>
+                        {c.name}
+                      </option>
                     );
                   })}
                 </datalist>
-                <button type="button" className="btn btn-warning" onClick={() => {
-                  const card = (document.getElementById('cardOutTxt').value).split('/')
-                  appendCard(false, card[0], card[1])
-                }}>ADD</button>
+                <button
+                  type="button"
+                  className="btn btn-warning"
+                  onClick={() => {
+                    const card = document
+                      .getElementById("cardOutTxt")
+                      .value.split("/");
+                    appendCard(false, card[0], card[1]);
+                  }}
+                >
+                  ADD
+                </button>
               </div>
             </div>
 
@@ -220,8 +228,8 @@ export default function CreateTradeModal({ credits, cards }) {
                 Create
               </button>
             </div>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   );

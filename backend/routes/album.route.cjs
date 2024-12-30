@@ -52,6 +52,8 @@ router.get('/getAlbumCardsData/:id', async (req, res) => {
 router.post('/getCharactersByIds', async (req, res) => {
 	try {
 		const ids = req.body.ids;
+		if (!ids) 
+			throw new Error("no cards id passed")
 		const characters = await marvelController.getCharactersByIds(ids)
 		res.status(200).json(characters)
 	} catch (err) {

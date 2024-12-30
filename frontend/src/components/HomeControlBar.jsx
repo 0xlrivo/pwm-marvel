@@ -1,5 +1,6 @@
 export default function HomeControlBar({ isLogged, credits, pagination, changePage }) {
 
+    // API call to /user/buyCredits
     const buyCredits = async () => {
         const options = {
             method: "PUT",
@@ -16,6 +17,7 @@ export default function HomeControlBar({ isLogged, credits, pagination, changePa
         }
     }
 
+    // renders the pagination controller that splits the album into pages of 10 cards each
     const renderPaginationController = () => {
         let res = []
         for (let i = 0; i < pagination.numPages; i++) {
@@ -33,14 +35,20 @@ export default function HomeControlBar({ isLogged, credits, pagination, changePa
     }
 
     return (
-        <div className="navbar navbar-expand navbar-dark bg-dark fixed-bottom d-flex flex-wrap align-items-center justify-content-center">
-            <p className="text-bold text-white">{credits}</p>
-
-            <div className="bnt-group">
-                {renderPaginationController()}
+        <div className="bg-dark fixed-bottom d-flex flex-wrap align-items-center justify-content-center p-3 mb-0">
+            
+            <div className="flex align-items-center col-md-3 mb-2 mb-md-0 text-white text-decoration-none">
+                <button className="btn btn-primary">{credits} credits</button>
             </div>
 
-            <button type="button" className="btn btn-warning" onClick={buyCredits}>Buy Credits</button>
+            <div className="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+                <div className="btn-group">{renderPaginationController()}</div>
+            </div>
+
+            <div className="col-md-3 text-end">
+                <button type="button" className="btn btn-warning" onClick={buyCredits}>Buy Credits</button>
+            </div>
+            
 
         </div>
     )

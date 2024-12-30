@@ -110,7 +110,11 @@ const orderController = {
 		for (let i = 0; i < cards.length; i++) {
 			
 			// remove from creator album
-			creatorAlbum.cards.splice(creatorAlbum.cards.indexOf(cards[i]), 1)
+			if (creatorAlbum.cards.indexOf(cards[i]) !== -1) {
+				creatorAlbum.cards.splice(creatorAlbum.cards.indexOf(cards[i]), 1)
+			} else {
+				throw new Error("Creator doesn't have this card")
+			}
 			
 			// if duplicate card
 			if (fillerAlbum.cards.indexOf(cards[i]) !== -1) {
@@ -123,7 +127,12 @@ const orderController = {
 		// add filler cards to the creator of the order
 		cards = order.request.cards
 		for (let i = 0; i < cards.length; i++) {
-			fillerAlbum.cards.splice(fillerAlbum.cards.indexOf(cards[i]), 1)
+
+			if (fillerAlbum.cards.indexOf(cards[1]) !== -1) {
+				fillerAlbum.cards.splice(fillerAlbum.cards.indexOf(cards[i]), 1)
+			} else {
+				throw new Error("Filler doesn't have this card")
+			}
 			// if duplicate card
 			if (creatorAlbum.cards.indexOf(cards[i]) !== -1) {
 				throw new Error("Creator already has this card")
