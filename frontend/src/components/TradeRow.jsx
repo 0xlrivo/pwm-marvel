@@ -28,22 +28,32 @@ export default function TradeRow({
     }
   };
 
-  const fetchTradeData = async(cards, setter) => {
+  const fetchTradeData = async (cards, setter) => {
     const options = {
       method: "POST",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        "ids": cards
-      })
-    }
-    let response = await fetch("http://localhost:3000/api/album/getCharactersByIds", options)
+        ids: cards,
+      }),
+    };
+    let response = await fetch(
+      "http://localhost:3000/api/album/getCharactersByIds",
+      options
+    );
     if (response.ok) {
-      response = await response.json()
-      setter(response.map((i) => `${i.thumbnail.path}.${i.thumbnail.extension}`))
+      response = await response.json();
+      setter(
+        response.map((i) => {
+          return {
+            name: i.name,
+            src: `${i.thumbnail.path}.${i.thumbnail.extension}`,
+          };
+        })
+      );
     }
-  }
+  };
 
   const fetchCreatorUsername = async () => {
     const options = {
@@ -57,7 +67,7 @@ export default function TradeRow({
       options
     );
     if (response.ok) {
-      const user = await response.json()
+      const user = await response.json();
       setCreator(user.username);
     }
   };
@@ -81,31 +91,37 @@ export default function TradeRow({
   };
 
   const [creator, setCreator] = useState("");
-  const [offerData, setOfferData] = useState([])
-  const [requestData, setRequestData] = useState([])
+  const [offerData, setOfferData] = useState([]);
+  const [requestData, setRequestData] = useState([]);
 
   useEffect(() => {
     fetchCreatorUsername();
-    fetchTradeData(offer.cards, setOfferData)
-    fetchTradeData(request.cards, setRequestData)
+    fetchTradeData(offer.cards, setOfferData);
+    fetchTradeData(request.cards, setRequestData);
   }, []);
 
   return (
     <tr>
       <th scope="row">{creator}</th>
       <td>
-        {
-          offerData.map((o, idx) => {
-            return <img key={idx} width={200} height={200} src={o}/>
-          })
-        }
+        {offerData.map((o, idx) => {
+          return (
+            <>
+              <img key={idx} width={200} height={200} src={o.src} />
+              <figcaption className="figure-caption text-success">{o.name}</figcaption>
+            </>
+          );
+        })}
       </td>
       <td>
-      {
-          requestData.map((o, idx) => {
-            return <img key={idx} width={200} height={200} src={o}/>
-          })
-        }
+        {requestData.map((o, idx) => {
+          return (
+            <>
+              <img key={idx} width={200} height={200} src={o.src} />
+              <figcaption className="figure-caption text-danger">{o.name}</figcaption>
+            </>
+          );
+        })}
       </td>
       <td>
         {isOwned ? (
