@@ -2,11 +2,26 @@ import express from 'express'
 import cors from 'cors'
 import swaggerUi from 'swagger-ui-express'
 import swaggerAutogen from 'swagger-autogen'
-import { initMongoConnection } from './db.js'
+import { initMongoConnection, closeMongoConnection } from './db.js'
+import { loadCacheOnStartup, saveCacheOnShoutdown } from './marvel.js'
 import userRoutes from './routes/user.route.cjs'
 import albumRoutes from './routes/album.route.cjs'
 import orderRoutes from './routes/order.route.cjs'
 const port = process.env.PORT || 3000;
+
+const handleStarup = async() => {
+	// initialize the MongoDB connection
+	await initMongoConnection()
+	// load hero cache
+	loadCacheOnStartup()
+}
+
+const handleShutdown = async() => {
+	// close the MongoDB connection
+	await closeMongoConnection()
+	// save hero cahce
+	saveCacheOnShoutdown()
+}
 
 const app = express() 
 
@@ -34,8 +49,16 @@ app.use('/api/user', userRoutes)
 app.use('/api/album', albumRoutes)
 app.use('/api/order', orderRoutes)
 
-// initialize the MongoDB connection
-await initMongoConnection()
+// serve on port 3000
+const server = app.listen(port, async () => {
+	console.log('[INFO] App listening on port ${port}')
+	await handleStarup()
+})
 
-app.listen(port, () => {console.log('[INFO] App listening on port ${port}')})
+// shutdown actions
+server.on('close', async () => {
+	console.log('[INFO] server shutting down... cleaning resources')
+	await handleShutdown()
+})
 
+process.on("SIGINT", handleShutdown)

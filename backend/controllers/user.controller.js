@@ -29,7 +29,7 @@ const userController = {
 			email: email,
 			password: password,
 			favoriteHero: favoriteHero,
-			credits: 100
+			credits: 10
 		}
 		const op = await dbController.insertDocument(collection, document)
 		await albumController.createAlbum(op.insertedId)

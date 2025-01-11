@@ -1,10 +1,28 @@
+import { writeFileSync, readFileSync } from "fs"
 import MD5 from "crypto-js/md5.js";
 const MARVEL_PUBKEY = process.env.MARVEL_PUBKEY
 const MARVEL_PRIVKEY = process.env.MARVEL_PRIVKEY
 const BASE_URL = 'https://gateway.marvel.com/v1/public'
 
 // caches hero requests after their first occurrence to increase perfomances
-let hero_cache = new Map()
+let hero_cache
+
+const loadCacheOnStartup = () => {
+	try {
+		const json = readFileSync(process.env.HERO_CACHE_PATH, 'utf-8')
+		const entries = JSON.parse(json)
+		hero_cache = new Map(entries)
+	} catch (err) {
+		console.error("failed to load hero cache")
+		hero_cache = new Map()
+	}
+}
+
+const saveCacheOnShoutdown = () => {
+	const json = JSON.stringify(Array.from(hero_cache.entries()), null, 2)
+	writeFileSync(process.env.HERO_CACHE_PATH, json, 'utf-8')
+	console.log("[INFO] hero cache saved")
+}
 
 /*
  * GET a single character
@@ -129,4 +147,4 @@ const marvelController = {
 	}
 }
 
-export { marvelController }
+export { loadCacheOnStartup, saveCacheOnShoutdown, marvelController }

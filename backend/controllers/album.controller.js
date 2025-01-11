@@ -49,7 +49,7 @@ const albumController = {
 		const album = await this.getAlbumOwnedBy(recipientId)
 		
 		// throws if the user doesn't have enough credits @todo refactor to scale this at the end if the rest fails
-		await userController.checkAndScaleCredits(recipientId, 10)
+		await userController.checkAndScaleCredits(recipientId, 1)
 		
 		const generatedCharacters = await marvelController.getRandomCharacters(5)
 		console.log(generatedCharacters)

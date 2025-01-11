@@ -32,6 +32,11 @@ async function initMongoConnection() {
 	}
 }
 
+async function closeMongoConnection() {
+	if (client) {
+		await client.close()
+	}
+}
 
 const dbController = {
 
@@ -108,4 +113,4 @@ const dbController = {
 	}
 }
 
-export { initMongoConnection, dbController }
+export { initMongoConnection, closeMongoConnection, dbController }
