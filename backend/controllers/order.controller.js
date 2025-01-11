@@ -99,6 +99,9 @@ const orderController = {
 		if (order.creatorId === fillerId) {
 			throw new Error("Cannot fill your own orders")
 		}
+		if (order.request.cards.length > 3 || order.offer.cards.length > 3) {
+			throw new Error("Max 3 cards")
+		}
 		
 		// fetch both albums
 		const creatorAlbum = await albumController.getAlbumOwnedBy(order.creatorId);

@@ -4,12 +4,16 @@ export default function CreateTradeModal({ credits, cards }) {
   const appendCard = (isIn, cardId, cardName) => {
     cardId = parseInt(cardId, 10);
     if (isIn) {
-      // check for duplicate entries
-      if (cardsOut.findIndex((i) => i.id === cardId) === -1)
-        setCardsOut((prev) => [...prev, { id: cardId, name: cardName }]);
+      if (cardsOut.length < 3) {
+        // check for duplicate entries
+        if (cardsOut.findIndex((i) => i.id === cardId) === -1)
+          setCardsOut((prev) => [...prev, { id: cardId, name: cardName }]);
+      }
     } else {
-      if (cardsIn.findIndex((i) => i.id === cardId) === -1)
-        setCardsIn((prev) => [...prev, { id: cardId, name: cardName }]);
+      if (cardsIn.length < 3) {
+        if (cardsIn.findIndex((i) => i.id === cardId) === -1)
+          setCardsIn((prev) => [...prev, { id: cardId, name: cardName }]);
+      }
     }
   };
 
@@ -80,7 +84,7 @@ export default function CreateTradeModal({ credits, cards }) {
       options
     );
     if (response.ok) {
-      window.location.href = "http://localhost:5173/trade"; 
+      window.location.href = "http://localhost:5173/trade";
     } else {
       console.error(await response.json());
     }
