@@ -68,8 +68,19 @@ router.post('/openPacket', authenticateRoute, async (req, res) => {
 		const packetContent = await albumController.openPacket(owner)
 		res.status(200).json(packetContent)
 	} catch (err) {
-		console.log(err)
-		res.status(500).json()
+		res.status(500).json(err)
+	}
+})
+
+router.put('/sellCard/:id', authenticateRoute, async (req, res) => {
+	try {
+		console.log(req.user.id)
+		console.log(req.params.id)
+		const owner = req.user.id; // JWT
+		await albumController.sellCard(owner, parseInt(req.params.id, 10));
+		res.status(200).json()
+	} catch (err) {
+		res.status(500).json(err)
 	}
 })
 

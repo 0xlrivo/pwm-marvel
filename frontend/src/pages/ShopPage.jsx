@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useOutletContext } from "react-router-dom";
+import SellCardsTable from "../components/SellCardsTable";
 
 export default function ShopPage() {
 
@@ -37,18 +38,14 @@ export default function ShopPage() {
         }
     };
 
-    const [, user, , ,] = useOutletContext();
+    const [, user, ,pagination,] = useOutletContext();
     const [packetContent, setPacketContent] = useState([])
 
     return (
         <>
             <h1>Shop</h1>
 
-            {
-                packetContent.length > 0
-                    ? "something"
-                    : "none"
-            }
+            <SellCardsTable cards={pagination.cards}/>
 
             <div className="bg-dark fixed-bottom d-flex flex-wrap align-items-center justify-content-center p-3 mb-0">
                 <div className="flex align-items-center col-md-3 mb-2 mb-md-0 text-white text-decoration-none">

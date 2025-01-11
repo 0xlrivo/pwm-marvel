@@ -72,7 +72,22 @@ const albumController = {
 
 		// return the packet's content with duplicate informations for frontend
 		return content
-	}	
+	},
+
+	async sellCard(recipientId, cardId) {
+		const album = await this.getAlbumOwnedBy(recipientId)
+		const idx = album.cards.indexOf(cardId)
+		console.log(album.cards)
+		console.log(idx)
+		if (idx !== -1) {
+			album.cards.splice(idx, 1) // remove card from album
+			await this.updateAlbum(album._id, album) // update album
+			await userController.addCreditsTo(recipientId, 1) // add 1 credits to user
+			console.log("sold card " + cardId)
+		}
+		else
+			throw new Error("You don't have this card")
+	}
 }
 
 export { albumController }
