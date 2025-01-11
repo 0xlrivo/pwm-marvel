@@ -3,18 +3,23 @@ const MARVEL_PUBKEY = process.env.MARVEL_PUBKEY
 const MARVEL_PRIVKEY = process.env.MARVEL_PRIVKEY
 const BASE_URL = 'https://gateway.marvel.com/v1/public'
 
+// caches hero requests after their first occurrence to increase perfomances
+let hero_cache = new Map()
+
 /*
  * GET a single character
  * GET multiple characters
  */
 
 // params = [{name: "hulk"}] 
-const baseMarvelRequest = async(route, params) => {
-	// construct base request
-	const timestamp = Date.now() 
-	const hash = MD5(`${timestamp}${MARVEL_PRIVKEY}${MARVEL_PUBKEY}`) 
-	let url =	`${BASE_URL}${route}?ts=${timestamp}&apikey=${MARVEL_PUBKEY}&hash=${hash}`	
-	
+const baseMarvelRequest = async (route, params) => {
+	// get current timestamp
+	const timestamp = Date.now()
+	// hash timestamp, pubkey and privkey
+	const hash = MD5(`${timestamp}${MARVEL_PRIVKEY}${MARVEL_PUBKEY}`)
+	// construct base URL without parameters
+	let url = `${BASE_URL}${route}?ts=${timestamp}&apikey=${MARVEL_PUBKEY}&hash=${hash}`
+	// add any additional parameters to the base url
 	if (params) {
 		for (let i = 0; i < params.length; i++) {
 			url += `&${Object.keys(params[i])[0]}=${Object.values(params[i])[0]}`
@@ -30,17 +35,32 @@ const baseMarvelRequest = async(route, params) => {
 }
 
 const marvelController = {
-	
+
 	async getCharacterById(id) {
 		try {
-			let resp = await baseMarvelRequest(`/characters/${id}`)
-			resp = resp.data.results[0]
+			let resp
+			// check if this id is cached
+			if (hero_cache.has(id)) {
+				// no need to fetch marvel APIs, just return the cached data
+				resp = hero_cache.get(id)
+				console.log("responded with cached hero " + id)
+			} else {
+				// fetch marvel APIs
+				resp = await baseMarvelRequest(`/characters/${id}`)
+				resp = resp.data.results[0]
+				// cache this id for future requests
+				hero_cache.set(id, resp)
+				console.log("first time requesting hero " + id)
+			}
+			
+			// return only relevant data
 			return {
 				id: resp.id,
 				name: resp.name,
 				description: resp.description,
 				thumbnail: resp.thumbnail
 			}
+
 		} catch (err) {
 			// in case this id isn't associated with any hero
 			if (err.name === "TypeError") return {
@@ -48,7 +68,7 @@ const marvelController = {
 			}
 		}
 	},
-	
+
 	// fetch a list of characters from a list of ids
 	async getCharactersByIds(ids) {
 		try {
@@ -63,11 +83,11 @@ const marvelController = {
 			return err
 		}
 	},
-	
+
 	// fetch all of the characthers with the mathcing name
 	async getCharactersByName(name) {
 		try {
-			const resp = await baseMarvelRequest('/characters', [{'nameStartsWith': name}, {'limit': 10}])
+			const resp = await baseMarvelRequest('/characters', [{ 'nameStartsWith': name }, { 'limit': 10 }])
 			console.log(resp)
 			let result = []
 			for (const i of resp.data.results) {
@@ -90,8 +110,8 @@ const marvelController = {
 			let result = []
 			for (let i = 0; i < count; i++) {
 				let resp = await baseMarvelRequest('/characters', [
-					{'offset': Math.floor(Math.random() * 1500)},
-					{'limit' : 1}
+					{ 'offset': Math.floor(Math.random() * 1500) },
+					{ 'limit': 1 }
 				])
 				console.log(resp.data.results)
 				resp = resp.data.results[0]
