@@ -33,7 +33,7 @@ export default function TradePage() {
   return (
     <>
       <h1>Trade</h1>
-      <table className="tradetable table table-responsive table-striped">
+      <table className="tradetable table table-responsive table-striped text-center">
         <thead>
           <tr>
             <th scope="col">Creator</th>
