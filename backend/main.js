@@ -17,10 +17,12 @@ const handleStarup = async() => {
 }
 
 const handleShutdown = async() => {
+	server.close()
 	// close the MongoDB connection
 	await closeMongoConnection()
 	// save hero cahce
 	saveCacheOnShoutdown()
+	process.exit(0)
 }
 
 const app = express() 
@@ -53,12 +55,6 @@ app.use('/api/order', orderRoutes)
 const server = app.listen(port, async () => {
 	console.log('[INFO] App listening on port ${port}')
 	await handleStarup()
-})
-
-// shutdown actions
-server.on('close', async () => {
-	console.log('[INFO] server shutting down... cleaning resources')
-	await handleShutdown()
 })
 
 process.on("SIGINT", handleShutdown)
