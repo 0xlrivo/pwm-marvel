@@ -1,7 +1,7 @@
 import { useOutletContext } from "react-router-dom";
 import AlbumViewer from "./AlbumViewer";
 import HomeControlBar from "./HomeControlBar";
-import "../App.css"
+import "../../public/style.css"
 
 export default function Home() {
 

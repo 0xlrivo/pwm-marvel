@@ -4,7 +4,7 @@ export default function TradePage({ user, cards }) {
 
   return (
     <>
-      <div className="navbar navbar-expand navbar-dark bg-dark fixed-bottom d-flex flex-wrap align-items-center justify-content-center">
+      <div className="bg-dark fixed-bottom d-flex flex-wrap align-items-center justify-content-center p-3 mb-0">
         <div className="flex align-items-center col-md-3 mb-2 mb-md-0 text-white text-decoration-none">
           <button className="btn btn-primary">
             {user ? user.credits : 0} credits

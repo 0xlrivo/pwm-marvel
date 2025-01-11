@@ -33,7 +33,7 @@ export default function TradePage() {
   return (
     <>
       <h1>Trade</h1>
-      <table className="table table-responsive table-striped">
+      <table className="tradetable table table-responsive table-striped">
         <thead>
           <tr>
             <th scope="col">Creator</th>
@@ -52,6 +52,7 @@ export default function TradePage() {
                 tradeId={t._id}
                 offer={t.offer}
                 request={t.request}
+                cardsOwned={pagination.cards.map((i) => {return i.id})} // only pass ids
               />
             );
           })}

@@ -17,14 +17,18 @@ table {
 
 table tbody tr {
     color: white;
-    background: rgb(255, 0, 0);
-    background: radial-gradient(circle, rgba(255, 0, 0, 1) 0%, rgba(159, 44, 44, 1) 50%, rgba(50, 3, 3, 1) 100%);
+    background: grey
 }
 
 thead tr th {
     font-size: larger;
     font-weight: bolder;
     color: white;
+}
+
+.root-div {
+    margin-top: 0;
+    padding: 0;
 }
 
 .layout-main {
@@ -42,4 +46,22 @@ thead tr th {
 
 .hero-card {
     background-color: black;
+}
+
+.hero-card-img {
+    width: 100%;
+    height: 15vw;
+    object-fit: cover;
+}
+
+.tradetable {
+    margin-bottom: 20em;
+}
+
+.traderow-fillable-img {
+    border: 2px solid green;
+}
+
+.traderow-unfillable-img {
+    border: 2px solid red;
 }

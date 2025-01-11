@@ -1,4 +1,4 @@
-import '../App.css'
+import "../../public/style.css"
 
 export default function HeroCard({ id, name, imgSrc }) {
 	return (

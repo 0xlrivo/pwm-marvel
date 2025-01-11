@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "react"
 
 export default function TradeRow({
   isOwned,
@@ -6,7 +6,16 @@ export default function TradeRow({
   tradeId,
   offer,
   request,
+  cardsOwned
 }) {
+
+  const canFillTrade = () => {
+    for (let i = 0; i < request.cards.length; i++) {
+      if (cardsOwned.indexOf(request.cards[i]) === -1) return false;
+    }
+    return true
+  }
+
   const fillTrade = async () => {
     const options = {
       method: "POST",
@@ -47,6 +56,7 @@ export default function TradeRow({
       setter(
         response.map((i) => {
           return {
+            id: i.id,
             name: i.name,
             src: `${i.thumbnail.path}.${i.thumbnail.extension}`,
           };
@@ -95,9 +105,9 @@ export default function TradeRow({
   const [requestData, setRequestData] = useState([]);
 
   useEffect(() => {
-    fetchCreatorUsername();
-    fetchTradeData(offer.cards, setOfferData);
-    fetchTradeData(request.cards, setRequestData);
+    fetchCreatorUsername()
+    fetchTradeData(offer.cards, setOfferData)
+    fetchTradeData(request.cards, setRequestData)
   }, []);
 
   return (
@@ -115,34 +125,34 @@ export default function TradeRow({
       </td>
       <td>
         {requestData.map((o, idx) => {
-          return (
-            <>
-              <img key={idx} width={200} height={200} src={o.src} />
-              <figcaption className="figure-caption text-white">{o.name}</figcaption>
-            </>
-          );
+          if (cardsOwned.indexOf(o.id) !== -1) {
+            return (<>
+              <img key={"rqdata" + idx} width={200} height={200} src={o.src} className="traderow-fillable-img" />
+              <figcaption className="figure-caption text-success">{o.name}</figcaption>
+            </>)
+          } else {
+            return (<>
+              <img key={"rqdata" + idx} width={200} height={200} src={o.src} className="traderow-unfillable-img" />
+              <figcaption className="figure-caption text-danger">{o.name}</figcaption>
+            </>)
+          }
         })}
       </td>
       <td>
         {isOwned ? (
-          <button
-            className="btn btn-danger"
-            onClick={async () => {
-              await deleteTrade();
-            }}
-          >
+          <button className="btn btn-danger" onClick={async () => await deleteTrade()}>
             DELETE
           </button>
+        ) : canFillTrade() ? (
+          <button className="btn btn-success" onClick={async () => await fillTrade()}>
+            FILL
+          </button>
         ) : (
-          <button
-            className="btn btn-success"
-            onClick={async () => {
-              await fillTrade();
-            }}
-          >
+          <button disabled className="btn btn-danger">
             FILL
           </button>
         )}
+
       </td>
     </tr>
   );

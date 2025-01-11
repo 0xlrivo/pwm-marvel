@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "./Navbar";
 import { useEffect } from "react";
-import "../App.css"
+import "../../public/style.css"
 
 export default function Layout({
   isLogged,
@@ -63,7 +63,7 @@ export default function Layout({
   }, []);
 
   return (
-    <div className="comics-bg">
+    <div>
       <header>
         <Navbar isLogged={isLogged} />
       </header>
