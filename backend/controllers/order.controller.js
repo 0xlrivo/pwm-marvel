@@ -128,7 +128,7 @@ const orderController = {
 		cards = order.request.cards
 		for (let i = 0; i < cards.length; i++) {
 
-			if (fillerAlbum.cards.indexOf(cards[1]) !== -1) {
+			if (fillerAlbum.cards.indexOf(cards[i]) !== -1) {
 				fillerAlbum.cards.splice(fillerAlbum.cards.indexOf(cards[i]), 1)
 			} else {
 				throw new Error("Filler doesn't have this card")

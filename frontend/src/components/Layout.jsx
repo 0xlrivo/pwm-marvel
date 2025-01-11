@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "./Navbar";
 import { useEffect } from "react";
+import "../App.css"
 
 export default function Layout({
   isLogged,
@@ -9,7 +10,7 @@ export default function Layout({
   pagination,
   setPagination,
 }) {
-    
+
   const parseJwt = () => {
     const jwt = localStorage.getItem("auth-token");
     if (!jwt) return null;
@@ -19,21 +20,21 @@ export default function Layout({
 
   const fetchAlbumCards = async (albumId) => {
     const options = {
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json',
-        },
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+      },
     }
     const resp = await fetch(`http://localhost:3000/api/album/getAlbumCardsData/${albumId}`, options)
     if (resp.ok) {
-        const content = await resp.json()
-        setPagination({
-            curPage: 0,
-            numPages: Math.ceil(content.length / 10),
-            cards: content ? content : []
-        })
+      const content = await resp.json()
+      setPagination({
+        curPage: 0,
+        numPages: Math.ceil(content.length / 10),
+        cards: content ? content : []
+      })
     }
-}
+  }
 
   // calls the backend API to fetch data from the currently logged user
   const fetchUserData = async (id) => {
@@ -62,11 +63,11 @@ export default function Layout({
   }, []);
 
   return (
-    <div>
+    <div className="comics-bg">
       <header>
         <Navbar isLogged={isLogged} />
       </header>
-      <main style={{ marginTop: "73px" }} className="container-fluid">
+      <main className="layout-main container-fluid">
         <Outlet
           context={[isLogged, user, setUser, pagination, setPagination]}
         />

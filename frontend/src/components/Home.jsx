@@ -1,6 +1,7 @@
 import { useOutletContext } from "react-router-dom";
 import AlbumViewer from "./AlbumViewer";
 import HomeControlBar from "./HomeControlBar";
+import "../App.css"
 
 export default function Home() {
 
@@ -21,14 +22,14 @@ export default function Home() {
     }
 
     // STATE
-    const [isLogged, user, setUser, pagination, setPagination] = useOutletContext()
+    const [isLogged, user,,pagination, setPagination] = useOutletContext()
 
     return (
         <div>
             {
                 isLogged
                     ? <>
-                        <h1>Album of {user ? user.username : ""}</h1>
+                        <h1>Album of {user ? user.username : ""}:</h1>
 
                         <AlbumViewer
                             albumId={parseJwt().albumId}

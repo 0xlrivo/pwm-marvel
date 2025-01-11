@@ -16,10 +16,12 @@ router.post('/register', async(req, res) => {
 	const email = req.body.email;
 	const password = req.body.password;
 	const favoriteHero = req.body.favoriteHero;
+	console.log("registering " + username + " " + favoriteHero)
 	if (!username || !email || !password || !favoriteHero) {
 		res.status(400).json()
 	}
 	else {
+		
 		await userController.registerUser(username, email, password, favoriteHero)
 		res.status(201).json({"message": "user registered"})
 	}
@@ -51,7 +53,7 @@ router.put('/buyCredits', authenticateRoute, async(req, res) => {
 
 router.put('/editProfile', authenticateRoute, async(req, res) => {
 	const userId = req.user.id // from JWT
-	await userController.updateUser(userId, {username: req.body.username})
+	await userController.updateUser(userId, req.body)
 	res.status(201).json({"message": "user updated"})
 })
 

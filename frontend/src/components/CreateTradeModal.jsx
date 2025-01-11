@@ -150,6 +150,7 @@ export default function CreateTradeModal({ credits, cards }) {
                     appendCard(true, x[0], x[1]);
                   }}
                 >
+                  <option selected hidden></option>
                   {cards.map((t) => {
                     return (
                       <option value={`${t.id}/${t.name}`}>{t.name}</option>

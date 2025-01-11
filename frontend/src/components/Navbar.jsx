@@ -28,7 +28,7 @@ export default function Navbar({ isLogged }) {
       <ul className="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
         <li>
           <Link to="/" className="nav-link px-2 text-warning">
-            HOME
+            ALBUM
           </Link>
         </li>
         <li>
@@ -59,11 +59,11 @@ export default function Navbar({ isLogged }) {
           </button>
         ) : (
           <span>
-            <button type="button" className="btn btn-warning">
-              Sign-up
+            <button type="button" className="btn btn-info">
+              <Link to={"/register"}>Register</Link>
             </button>
-            <button type="button" className="btn btn-primary">
-              <Link to="/login">Login</Link>
+            <button type="button" className="btn btn-danger">
+              <Link to={"/login"}>Login</Link>
             </button>
           </span>
         )}

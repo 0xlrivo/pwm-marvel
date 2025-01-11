@@ -22,7 +22,7 @@ export default function TradePage() {
     }
   };
 
-  const [isLogged, user, setUser, pagination, setPagination] =
+  const [,user,,pagination,] =
     useOutletContext();
   const [trades, setTrades] = useState([]);
 
@@ -33,7 +33,7 @@ export default function TradePage() {
   return (
     <>
       <h1>Trade</h1>
-      <table className="table table-responsive table-hover table-striped">
+      <table className="table table-responsive table-striped">
         <thead>
           <tr>
             <th scope="col">Creator</th>

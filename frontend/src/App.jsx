@@ -6,6 +6,7 @@ import LoginPage from './pages/LoginPage.jsx'
 import TradePage from './pages/TradePage.jsx'
 import { useState } from 'react'
 import ProfilePage from './pages/ProfilePage.jsx'
+import RegiisterPage from './pages/RegisterPage.jsx'
 
 export default function App() {
 	
@@ -41,6 +42,7 @@ export default function App() {
 					<Route path='shop' element={<ShopPage/>}/>
 					<Route path='trade' element={<TradePage/>}/>
 					<Route path='login' element={<LoginPage/>}/>
+					<Route path='register' element={<RegiisterPage/>}/>
 				</Route>
 			</Routes>
 		</BrowserRouter>

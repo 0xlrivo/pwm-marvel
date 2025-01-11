@@ -46,7 +46,7 @@ export default function HomeControlBar({ isLogged, credits, pagination, changePa
             </div>
 
             <div className="col-md-3 text-end">
-                <button type="button" className="btn btn-warning" onClick={buyCredits}>Buy Credits</button>
+                <button type="button" className="btn btn-warning" onClick={async() => {await buyCredits()}}>Buy Credits</button>
             </div>
             
 

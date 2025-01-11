@@ -70,7 +70,7 @@ const albumController = {
 		// update the album in the database
 		await this.updateAlbum(album._id, album)
 
-		// return the packet's content with duplicate information s for frontend
+		// return the packet's content with duplicate informations for frontend
 		return content
 	}	
 }

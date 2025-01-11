@@ -102,13 +102,13 @@ export default function TradeRow({
 
   return (
     <tr>
-      <th scope="row">{creator}</th>
+      <th scope="row"><h5>{creator}</h5></th>
       <td>
         {offerData.map((o, idx) => {
           return (
             <>
               <img key={idx} width={200} height={200} src={o.src} />
-              <figcaption className="figure-caption text-success">{o.name}</figcaption>
+              <figcaption className="figure-caption text-white">{o.name}</figcaption>
             </>
           );
         })}
@@ -118,7 +118,7 @@ export default function TradeRow({
           return (
             <>
               <img key={idx} width={200} height={200} src={o.src} />
-              <figcaption className="figure-caption text-danger">{o.name}</figcaption>
+              <figcaption className="figure-caption text-white">{o.name}</figcaption>
             </>
           );
         })}

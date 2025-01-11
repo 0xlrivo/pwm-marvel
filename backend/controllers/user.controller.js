@@ -24,7 +24,6 @@ const userController = {
 	
 	/// registers a new user
 	async registerUser(username, email, password, favoriteHero) {
-		// @todo create the view with the unique fileds to make this work correctly
 		const document = {
 			username: username,
 			email: email,
