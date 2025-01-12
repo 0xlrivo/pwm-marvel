@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 
 export default function ProfilePage() {
@@ -9,16 +9,16 @@ export default function ProfilePage() {
             headers: {
                 Accept: "application/json"
             }
-        }
+        };
         let response = await fetch(
-            "http://localhost:3000/api/album/getCharactersByName/" + favHero,
+            `http://localhost:3000/api/album/getCharacterById/${parseInt(favHero, 10)}`,
             options
         );
         if (response.ok) {
-            response = await response.json()
-            return response.name
+            response = await response.json();
+            return response.name;
         }
-    }
+    };
 
     const searchHeroByNames = async (query) => {
         const options = {
@@ -30,7 +30,7 @@ export default function ProfilePage() {
         };
     
         let response = await fetch(
-          "http://localhost:3000/api/album/getCharactersByName/" + query,
+          `http://localhost:3000/api/album/getCharactersByName/${query}`,
           options
         );
         if (response.ok) {
@@ -43,12 +43,25 @@ export default function ProfilePage() {
         } else {
           console.error(await response.json());
         }
-      };
+    };
 
     const handleSubmit = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
         
-        const favHero = document.getElementById("inputFavoriteHero").value.split("/")[0];
+        let body = {
+            username,
+            email,
+            password: password.length > 0 ? password : "", // Se la password è vuota, invia una stringa vuota
+        };
+
+        const newFavHero = document.getElementById("inputFavoriteHero").value.split("/")[0]; // Ottieni l'ID del nuovo ero
+        // Aggiungi favoriteHero solo se è cambiato
+        if (newFavHero !== user.favHero) {
+            body.favoriteHero = parseInt(newFavHero, 10); // Aggiungi il nuovo valore solo se è cambiato
+            if (!body.favoriteHero) body.favoriteHero = user.favHero
+        } else {
+            body.favoriteHero = user.favHero; // Se non è cambiato, mantieni il valore precedente
+        }
 
         const options = {
             method: 'PUT',
@@ -56,36 +69,40 @@ export default function ProfilePage() {
                 'Authorization': 'Bearer ' + localStorage.getItem('auth-token'),
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                'username': username,
-                'email': email,
-                'favoriteHero': parseInt(favHero, 10)
-            })
-        }
+            body: JSON.stringify(body) // Invia il body con solo i dati cambiati
+        };
 
-        const resp = await fetch('http://localhost:3000/api/user/editProfile', options)
+        const resp = await fetch('http://localhost:3000/api/user/editProfile', options);
         if (resp.ok) {
-            const content = await resp.json()
-            console.log(content)
+            window.location.href = 'http://localhost:5173/';
         } else {
-            console.log("LOGIN FAILED")
-            console.error(await resp.json())
+            console.log("LOGIN FAILED");
+            console.error(await resp.json());
         }
-    }
+    };
 
-    const [, user, setUser, ,] = useOutletContext()
+    useEffect(() => {
+        const fetchFavoriteHero = async () => {
+            const heroName = await getFavHeroName();
+            setFavHero(heroName || ''); // Imposta il valore nello stato
+        };
+        fetchFavoriteHero();
+    }, []);
 
-    const [username, setUsername] = useState(user.username)
-    const [email, setEmail] = useState(user.email)
-    const [favHero, setFavHero] = useState(user.favoriteHero)
-    const [DL, setDL] = useState([])
+    const [, user, setUser, ,] = useOutletContext();
+
+    const [username, setUsername] = useState(user.username);
+    const [email, setEmail] = useState(user.email);
+    const [password, setPassword] = useState("");
+    const [favHero, setFavHero] = useState(user.favoriteHero);
+    const [DL, setDL] = useState([]);
 
     return (
         <div className="d-flex justify-content-center align-items-center">
             <form 
                 onSubmit={handleSubmit} 
                 className="p-4 bg-white rounded shadow"
-                style={{ width: '400px', marginTop: '20vh'}}
+                style={{ width: '400px', marginTop: '20vh' }}
             >
                 {/* Username */}
                 <div className="mb-3">
@@ -111,6 +128,18 @@ export default function ProfilePage() {
                     />
                 </div>
 
+                {/* Password */}
+                <div className="mb-3">
+                    <label htmlFor="inputPassword" className="form-label">New Password</label>
+                    <input
+                        type="password"
+                        className="form-control"
+                        id="inputPassword"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                </div>
+
                 {/* Favorite Hero */}
                 <div className="mb-3">
                     <label htmlFor="inputFavoriteHero" className="form-label">Favorite Hero</label>
@@ -119,8 +148,11 @@ export default function ProfilePage() {
                         list="favheroDL"
                         className="form-control"
                         id="inputFavoriteHero"
-                        defaultValue={getFavHeroName()}
-                        onChange={(e) => searchHeroByNames(e.target.value)}
+                        value={favHero} // Usa lo stato per il valore
+                        onChange={(e) => {
+                            setFavHero(e.target.value); // Aggiorna lo stato
+                            searchHeroByNames(e.target.value);
+                        }}
                     />
                     <datalist id="favheroDL">
                         {DL.map((hero) => (
@@ -132,8 +164,8 @@ export default function ProfilePage() {
                 </div>
 
                 {/* Update Button */}
-                <button type="submit" className="btn btn-primary w-100">Update Profile</button>
+                <button type="submit" className="btn btn-danger w-100">Update Profile</button>
             </form>
         </div>
-    )
+    );
 }

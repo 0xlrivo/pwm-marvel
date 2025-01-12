@@ -1,4 +1,5 @@
 const express = require('express');
+const crypto = require('crypto');
 const { userController } = require('../controllers/user.controller')
 const { generateJWT, authenticateRoute } = require('../middlewares/auth.middleware')
 const router = express.Router()
@@ -14,14 +15,15 @@ router.get('/getUserById/:id', async(req, res) => {
 router.post('/register', async(req, res) => {
 	const username = req.body.username;
 	const email = req.body.email;
-	const password = req.body.password;
+	let password = req.body.password;
 	const favoriteHero = req.body.favoriteHero;
 	console.log("registering " + username + " " + favoriteHero)
 	if (!username || !email || !password || !favoriteHero) {
 		res.status(400).json()
 	}
 	else {
-		
+		const hash = crypto.createHash('sha256')
+		password = hash.update(password).digest('hex')
 		await userController.registerUser(username, email, password, favoriteHero)
 		res.status(201).json({"message": "user registered"})
 	}
@@ -35,7 +37,9 @@ router.post('/login', async(req, res) => {
 	}
 	else {
 		const user = await userController.getUserByUsername(username)
-		if (user && user.password === password) {
+		const hash = crypto.createHash('sha256')
+		const hashedPasswod = hash.update(password).digest('hex')
+		if (user && user.password === hashedPasswod) {
 			const jwt = await generateJWT(user._id)
 			res.status(200).json({"token": jwt})
 		}
@@ -53,6 +57,14 @@ router.put('/buyCredits', authenticateRoute, async(req, res) => {
 
 router.put('/editProfile', authenticateRoute, async(req, res) => {
 	const userId = req.user.id // from JWT
+	if (req.body.password === "") {
+		// if password is empty no need to change it
+		delete req.body.password;
+	} else {
+		// otherwise hash it in sha256
+		const hash = crypto.createHash('sha256')
+		req.body.password = hash.update(req.body.password).digest('hex');
+	}
 	await userController.updateUser(userId, req.body)
 	res.status(201).json({"message": "user updated"})
 })
