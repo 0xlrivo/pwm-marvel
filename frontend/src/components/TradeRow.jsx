@@ -111,34 +111,37 @@ export default function TradeRow({
   }, []);
 
   return (
-    <tr>
-      <th scope="row"><h5>{creator}</h5></th>
-      <td>
-        {offerData.map((o, idx) => {
-          return (
-            <>
-              <img key={idx} width={200} height={200} src={o.src} />
-              <figcaption className="figure-caption text-white">{o.name}</figcaption>
-            </>
-          );
-        })}
+    <tr className={canFillTrade() ? "traderow-fillable-img" : "traderow-unfillable-img"}>
+      <th scope="row" className="text-center">
+        <h5>{creator}</h5>
+      </th>
+      <td className="text-start">
+        <div className="d-flex justify-content-start">
+          {offerData.map((o, idx) => {
+            return (
+              <div key={idx} className="d-flex flex-column align-items-center mx-2">
+                <img width={200} height={200} src={o.src} />
+                <figcaption className="figure-caption text-white">{o.name}</figcaption>
+              </div>
+            );
+          })}
+        </div>
       </td>
-      <td>
-        {requestData.map((o, idx) => {
-          if (cardsOwned.indexOf(o.id) !== -1) {
-            return (<>
-              <img key={"rqdata" + idx} width={200} height={200} src={o.src} className="traderow-fillable-img" />
-              <figcaption className="figure-caption text-success">{o.name}</figcaption>
-            </>)
-          } else {
-            return (<>
-              <img key={"rqdata" + idx} width={200} height={200} src={o.src} className="traderow-unfillable-img" />
-              <figcaption className="figure-caption text-danger">{o.name}</figcaption>
-            </>)
-          }
-        })}
+      <td className="text-start">
+        <div className="d-flex justify-content-start">
+          {requestData.map((o, idx) => {
+            const imgClass = cardsOwned.indexOf(o.id) !== -1 ? 'traderow-fillable-img' : 'traderow-unfillable-img';
+            const figClass = cardsOwned.indexOf(o.id) !== -1 ? 'text-success' : 'text-danger';
+            return (
+              <div key={"rqdata" + idx} className="d-flex flex-column align-items-center mx-2">
+                <img width={200} height={200} src={o.src} className={imgClass} />
+                <figcaption className={`figure-caption ${figClass}`}>{o.name}</figcaption>
+              </div>
+            );
+          })}
+        </div>
       </td>
-      <td>
+      <td className="text-center">
         {isOwned ? (
           <button className="btn btn-danger" onClick={async () => await deleteTrade()}>
             DELETE
@@ -148,12 +151,12 @@ export default function TradeRow({
             FILL
           </button>
         ) : (
-          <button disabled className="btn btn-danger">
+          <button disabled className="btn btn-warning">
             FILL
           </button>
         )}
-
       </td>
     </tr>
+
   );
 }

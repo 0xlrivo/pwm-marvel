@@ -13,7 +13,7 @@ export default function HomeControlBar({ isLogged, credits, pagination, changePa
         }
         const response = await fetch('http://localhost:3000/api/user/buyCredits', options)
         if (response.ok) {
-            console.log("credits added")
+            window.location.href = 'http://localhost:5173/'
         }
     }
 

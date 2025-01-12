@@ -1,6 +1,22 @@
 import CreateTradeModal from "./CreateTradeModal";
 
 export default function TradePage({ user, cards }) {
+  
+  const buyCredits = async () => {
+    const options = {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "http://localhost:5173",
+          "Access-Control-Allow-Credentials": "true"
+        }
+    }
+    const response = await fetch('http://localhost:3000/api/user/buyCredits', options)
+    if (response.ok) {
+        window.location.href = 'http://localhost:5173/'
+    }
+}
 
   return (
     <>

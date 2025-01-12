@@ -22,7 +22,7 @@ export default function TradePage() {
     }
   };
 
-  const [,user,,pagination,] =
+  const [, user, , pagination,] =
     useOutletContext();
   const [trades, setTrades] = useState([]);
 
@@ -33,32 +33,37 @@ export default function TradePage() {
   return (
     <>
       <h1>Trade</h1>
-      <table className="tradetable table table-responsive table-striped text-center">
-        <thead>
-          <tr>
-            <th scope="col">Creator</th>
-            <th scope="col">Offer</th>
-            <th scope="col">Request</th>
-            <th scope="col">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {trades.map((t, idx) => {
-            return (
-              <TradeRow
-                key={idx}
-                isOwned={user._id == t.creatorId} // wheater or not the logged user owns this trade
-                creatorId={t.creatorId}
-                tradeId={t._id}
-                offer={t.offer}
-                request={t.request}
-                cardsOwned={pagination.cards.map((i) => {return i.id})} // only pass ids
-              />
-            );
-          })}
-        </tbody>
-      </table>
+      {/* Aggiungi un contenitore con overflow per la tabella */}
+      <div style={{ maxHeight: 'calc(100vh - 150px)', overflowY: 'auto', paddingRight: '15px' }}>
+        <table className="tradetable table table-responsive table-striped text-center">
+          <thead>
+            <tr>
+              <th scope="col">Creator</th>
+              <th scope="col">Offer</th>
+              <th scope="col">Request</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {trades.map((t, idx) => {
+              return (
+                <TradeRow
+                  key={idx}
+                  isOwned={user._id == t.creatorId} // wheater or not the logged user owns this trade
+                  creatorId={t.creatorId}
+                  tradeId={t._id}
+                  offer={t.offer}
+                  request={t.request}
+                  cardsOwned={pagination.cards.map((i) => { return i.id })} // only pass ids
+                />
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Trade Control Bar */}
       <TradeControlBar user={user} cards={pagination.cards} />
     </>
-  );
+  )
 }

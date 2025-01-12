@@ -17,25 +17,29 @@ export default function SellCardsTable({ cards }) {
     }
 
     return (
-        <table className="tradetable table table-responsive table-striped text-center">
-            <thead>
-                <tr>
-                    <th scope="col">Card</th>
-                    <th scope="col">Hero Name</th>
-                    <th scope="col">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {
-                    cards.map((card, idx) => {
-                        return <tr key={idx}>
-                            <td><img src={`${card.thumbnail.path}.${card.thumbnail.extension}`} width={200} height={200} /></td>
-                            <td>{card.name}</td>
-                            <td><button className="btn btn-success" onClick={() => sellCard(card.id)}>SELL</button></td>
+        <div style={{ position: 'relative', paddingBottom: '70px' }}>
+            <div style={{ maxHeight: 'calc(100vh - 100px)', overflowY: 'auto', paddingRight: '15px' }}>
+                <table className="tradetable table table-responsive text-center">
+                    <thead>
+                        <tr>
+                            <th scope="col">Card</th>
+                            <th scope="col">Hero Name</th>
+                            <th scope="col">Actions</th>
                         </tr>
-                    })
-                }
-            </tbody>
-        </table>
+                    </thead>
+                    <tbody>
+                        {
+                            cards.map((card, idx) => (
+                                <tr key={idx}>
+                                    <td><img src={`${card.thumbnail.path}.${card.thumbnail.extension}`} width={200} height={200} alt={card.name} /></td>
+                                    <td>{card.name}</td>
+                                    <td><button className="btn btn-success" onClick={() => sellCard(card.id)}>SELL</button></td>
+                                </tr>
+                            ))
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
     )
 }
