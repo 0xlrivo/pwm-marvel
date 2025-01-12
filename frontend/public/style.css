@@ -1,5 +1,4 @@
 body {
-    color: red;
     font-weight: bold;
 }
 
@@ -17,7 +16,7 @@ table {
 
 table tbody tr {
     color: white;
-    background: grey
+    background: rgb(0, 0, 0)
 }
 
 thead tr th {

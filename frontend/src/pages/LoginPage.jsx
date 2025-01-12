@@ -37,23 +37,33 @@ export default function LoginPage() {
     const [password, setPassword] = useState("")
 
     return (
-        <div>
-            <form onSubmit={handleSubmit}>
-                <label className="form-label">Username</label>
-                <input 
-                    className="form-control"
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                />
-                <label className="form-label">Password</label>
-                <input 
-                    className="form-control"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
-                <input type="submit" />
+        <div className="d-flex justify-content-center align-items-center">
+            <form 
+                onSubmit={handleSubmit} 
+                className="p-4 bg-white rounded shadow"
+                style={{marginTop: '25vh'}}
+            >
+                <div className="mb-3">
+                    <label htmlFor="username" className="form-label">Username</label>
+                    <input
+                        id="username"
+                        className="form-control"
+                        type="text"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                    />
+                </div>
+                <div className="mb-3">
+                    <label htmlFor="password" className="form-label">Password</label>
+                    <input
+                        id="password"
+                        className="form-control"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                </div>
+                <button type="submit" className="btn btn-danger w-100">Login</button>
             </form>
         </div>
     )
