@@ -35,6 +35,7 @@ export default function ShopPage() {
         if (resp.ok) {
             const content = await resp.json();
             setPacketContent(content)
+            window.location.href = 'http://localhost:5173/'
         }
     };
 

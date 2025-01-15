@@ -5,6 +5,7 @@ export default function ErrorToast({ error, setError }) {
     // runs whenver error state gets updated
     useEffect(() => {
         if (error.show) {
+            console.log(error)
             const toastError = document.getElementById('errorToast')
             const bootstrapToast = new window.bootstrap.Toast(toastError)
             bootstrapToast.show()

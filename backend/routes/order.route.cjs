@@ -33,7 +33,7 @@ router.put('/createOrder', authenticateRoute, async(req, res) => {
 		res.status(201).json({"message": "order created"})
 	} catch (err) {
 		console.error(err)
-		res.status(500).json({"error": err.message})
+		res.status(400).json({"message": err.message})
 	}
 })
 
@@ -45,7 +45,7 @@ router.post('/fillOrder/:orderId', authenticateRoute, async(req, res) => {
 		await orderController.fillOrder(orderId, fillerId)
 		res.status(200).json({"message": "order filled"})
 	} catch (err) {
-		res.status(500).json({"error": err.message})
+		res.status(500).json({"message": err.message})
 	}
 })
 
@@ -58,7 +58,7 @@ router.delete('/deleteOrder/:orderId', authenticateRoute, async(req, res) => {
 		await orderController.deleteOrder(callerId, orderId)
 		res.status(200).json({"message": "order deleted"})
 	} catch (err) {
-		res.status(500).json({"error": err.message})
+		res.status(400).json({"message": err.message})
 	}
 })
 

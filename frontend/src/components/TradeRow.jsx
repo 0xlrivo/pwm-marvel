@@ -113,7 +113,7 @@ export default function TradeRow({
   return (
     <tr className={canFillTrade() ? "traderow-fillable-img" : "traderow-unfillable-img"}>
       <th scope="row" className="text-center">
-        <h5>{creator}</h5>
+        <h5 style={{marginTop: "4.5em"}}>{creator}</h5>
       </th>
       <td className="text-start">
         <div className="d-flex justify-content-start">
@@ -125,6 +125,9 @@ export default function TradeRow({
               </div>
             );
           })}
+          <div className="d-flex flex-column justify-content-start align-items-center mx-2">
+            <button className="btn btn-warning" style={{marginTop: "5em"}}>{offer.credits} credits</button>
+          </div>
         </div>
       </td>
       <td className="text-start">
@@ -139,19 +142,22 @@ export default function TradeRow({
               </div>
             );
           })}
+          <div className="d-flex flex-column justify-content-start align-items-center mx-2">
+            <button className="btn btn-warning" style={{marginTop: "5em"}}>{request.credits} credits</button>
+          </div>
         </div>
       </td>
       <td className="text-center">
         {isOwned ? (
-          <button className="btn btn-danger" onClick={async () => await deleteTrade()}>
+          <button className="btn btn-danger" style={{marginTop: "4.5em"}} onClick={async () => await deleteTrade()}>
             DELETE
           </button>
         ) : canFillTrade() ? (
-          <button className="btn btn-success" onClick={async () => await fillTrade()}>
+          <button className="btn btn-success" style={{marginTop: "4.5em"}} onClick={async () => await fillTrade()}>
             FILL
           </button>
         ) : (
-          <button disabled className="btn btn-warning">
+          <button disabled className="btn btn-warning" style={{marginTop: "4.5em"}}>
             FILL
           </button>
         )}

@@ -1,6 +1,14 @@
 import { useState } from "react";
 
-export default function CreateTradeModal({ credits, cards }) {
+export default function CreateTradeModal({ credits, cards, setError }) {
+
+  const [creditsOut, setCreditsOut] = useState(0);
+  const [creditsIn, setCreditsIn] = useState(0);
+  const [cardsOut, setCardsOut] = useState([]);
+  const [cardsIn, setCardsIn] = useState([]);
+
+  const [cardsInDL, setCardsInDL] = useState([]);
+
   const appendCard = (isIn, cardId, cardName) => {
     cardId = parseInt(cardId, 10);
     if (isIn) {
@@ -77,25 +85,21 @@ export default function CreateTradeModal({ credits, cards }) {
       }),
     };
 
-    console.log(options.body);
-
     const response = await fetch(
       `http://localhost:3000/api/order/createOrder`,
       options
     );
-    if (response.ok) {
-      window.location.href = "http://localhost:5173/trade";
-    } else {
-      console.error(await response.json());
+    if (!response.ok) {
+      clearForm()
+      const msg = await response.json()
+      setError({
+        show: true,
+        title: "Create Trade Error",
+        msg: msg.message
+      })
     }
+    window.location.href = "http://localhost:5173/trade"
   };
-
-  const [creditsOut, setCreditsOut] = useState(0);
-  const [creditsIn, setCreditsIn] = useState(0);
-  const [cardsOut, setCardsOut] = useState([]);
-  const [cardsIn, setCardsIn] = useState([]);
-
-  const [cardsInDL, setCardsInDL] = useState([]);
 
   return (
     <div
@@ -141,8 +145,8 @@ export default function CreateTradeModal({ credits, cards }) {
                   Cards Out (from your album)
                 </label>
                 {cardsOut.length > 0 ? (
-                  cardsOut.map((c) => {
-                    return <p>{c.name}</p>;
+                  cardsOut.map((c, idx) => {
+                    return <p key={idx}>{c.name}</p>;
                   })
                 ) : (
                   <p>None</p>
@@ -154,10 +158,10 @@ export default function CreateTradeModal({ credits, cards }) {
                     appendCard(true, x[0], x[1]);
                   }}
                 >
-                  <option selected hidden></option>
-                  {cards.map((t) => {
+                  <option value="none" selected hidden></option>
+                  {cards.map((t, idx) => {
                     return (
-                      <option value={`${t.id}/${t.name}`}>{t.name}</option>
+                      <option key={idx} value={`${t.id}/${t.name}`}>{t.name}</option>
                     );
                   })}
                 </select>
@@ -183,8 +187,8 @@ export default function CreateTradeModal({ credits, cards }) {
                   Cards In
                 </label>
                 {cardsIn.length > 0 ? (
-                  cardsIn.map((c) => {
-                    return <p>{c.name}</p>;
+                  cardsIn.map((c, idx) => {
+                    return <p key={idx}>{c.name}</p>;
                   })
                 ) : (
                   <p>None</p>

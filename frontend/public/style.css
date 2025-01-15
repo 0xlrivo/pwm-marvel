@@ -65,3 +65,9 @@ thead tr th {
 .traderow-unfillable-img {
     border: 2px solid red;
 }
+
+.traderow-center-vertically {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Optional: to center horizontally as well */
+  }

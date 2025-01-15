@@ -55,26 +55,44 @@ const orderController = {
 	// @param request what cards/credits the creator expects from the filler
 	async createOrder(creatorId, offer, request) {
 
-		// @todo if this throw, without try catch, execution stops?
-		// make sure order creator has enough credits
-		if (offer.credits > 0) {
-			await userController.checkAndScaleCredits(creatorId, offer.credits)
-		}
-		
+		const creator = userController.getUserById(creatorId)
 		const creatorAlbum = await albumController.getAlbumOwnedBy(creatorId)
 
-		// assert creator has the cards he's offering
+		console.log(offer)
+		console.log(request)
+
+		// creator must have enough credits
+		if (offer.credits > 0 && creator.credits < offer.credits) {
+			throw new Error("You don't have enough credits")
+		}
+
+		// offer cards validation
 		let cards = offer.cards
 		for (let i = 0; i < cards.length; i++) {
-			if (creatorAlbum.cards.indexOf(cards[i]) === -1) {
+			// find the index of cards[i] in the album cards array
+			let idx = creatorAlbum.cards.indexOf(cards[i])
+
+			// check that creator have all the offer cards
+			if (idx === -1) {
 				throw new Error("Cannot offer cards you don't have")
 			}
-			// also check that he's not requesting same card
+	
+			// also check that he's not requesting a card he's also offering
 			if (request.cards.indexOf(cards[i]) !== -1) {
 				throw new Error("Cannot request same card you offered")
 			}
+
+			// if ok, temporary remove those cards from his album, if he deletes the order he can have them back
+			creatorAlbum.cards.splice(idx, 1)
 		}
 		
+		// User state update
+		await userController.checkAndScaleCredits(creatorId, offer.credits)
+
+		// Album state update (the creatorAlbum object is modified in-memory and replaced here)
+		await dbController.replaceDocumentById('albums', creatorAlbum._id, creatorAlbum)
+
+		// Order state update
 		const order = {
 			creatorId: creatorId,
 			fillerId: null,
@@ -107,22 +125,11 @@ const orderController = {
 		const creatorAlbum = await albumController.getAlbumOwnedBy(order.creatorId);
 		const fillerAlbum = await albumController.getAlbumOwnedBy(fillerId)
 
-		// remove offer cards from tthe creator album and	
-		// add offer cards to the filler
+		// add offer cards to the filler album
 		let cards = order.offer.cards
-		for (let i = 0; i < cards.length; i++) {
-			
-			// remove from creator album
-			if (creatorAlbum.cards.indexOf(cards[i]) !== -1) {
-				creatorAlbum.cards.splice(creatorAlbum.cards.indexOf(cards[i]), 1)
-			} else {
-				throw new Error("Creator doesn't have this card")
-			}
-			
-			// if duplicate card
-			if (fillerAlbum.cards.indexOf(cards[i]) !== -1) {
-				throw new Error("Filler already has this card")
-			} else {
+		for (let i = 0; i < cards.length; i++) {			
+			// if duplicate card avoid adding it twice to the filler
+			if (fillerAlbum.cards.indexOf(cards[i]) === -1) {
 				fillerAlbum.cards.push(cards[i])
 			}
 		}
@@ -130,7 +137,6 @@ const orderController = {
 		// add filler cards to the creator of the order
 		cards = order.request.cards
 		for (let i = 0; i < cards.length; i++) {
-
 			if (fillerAlbum.cards.indexOf(cards[i]) !== -1) {
 				fillerAlbum.cards.splice(fillerAlbum.cards.indexOf(cards[i]), 1)
 			} else {
@@ -145,7 +151,8 @@ const orderController = {
 		}
 		
 		// assert filler has enough credits
-		await userController.checkAndScaleCredits(fillerId, order.request.credits)
+		// (if this fails no state is writted after)
+		await userController.checkAndScaleCredits(fillerId, order.request.credits) // @todo non funziona bene l'aggiunta di crediti al filler
 		
 		// add the offer credits to the filler
 		await userController.addCreditsTo(fillerId, order.offer.credits)
@@ -171,13 +178,24 @@ const orderController = {
 			throw new Error("You don't own this order")
 		}
 
+		// recover offer cards to the creator's album (in-memory edit)
+		const creatorAlbum = await albumController.getAlbumOwnedBy(callerId)
+		let cards = order.offer.cards
+		for (let i = 0; i < cards.length; i++) {
+			// if he found the card again in some packet avoid re-adding it
+			if (creatorAlbum.cards.indexOf(cards[i]) === -1) {
+				creatorAlbum.cards.push(cards[i])
+			}
+		}
+
 		// refund offer creator
 		if (order.offer.credits > 0) {
 			await userController.addCreditsTo(callerId, order.offer.credits)
 		}
-		
+		// update the creatorAlbum state
+		await dbController.replaceDocumentById('albums', creatorAlbum._id, creatorAlbum)
 		// remove the order from database
-		await dbController.deleteteDocumentById(collection, order._id)
+		await dbController.deleteDocumentById(collection, order._id)
 	}
 	
 }
