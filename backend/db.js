@@ -38,6 +38,7 @@ async function closeMongoConnection() {
 	}
 }
 
+// those function propagates any error to the caller (controllers) that can chose how to handle them
 const dbController = {
 
 	translateCollection(collectionAsString) {
@@ -49,68 +50,118 @@ const dbController = {
 			case 'orders':
 				return orderCollection
 			default:
-				return null
+				throw new Error("invalid collection")
 		}
 	},
 
 	// returns all the documents in the given collection as an array
-	async findAll(collection) {
-		return await this.translateCollection(collection).find({}).toArray()
-	},
-	
-	// search a document with the matching id in the collection
-	async findOneById(collection, id) {
-		return await this.translateCollection(collection).findOne({_id: new ObjectId(id)})
-	},
-	
-	// search a document in the collection via a query
-	async findOneWithQuery(collection, query) {
-		return await this.translateCollection(collection).findOne(query)
-	},
-	
-	// returns all of the documents who matchs the query
-	async findWithQuery(collection, query) {
-		return await this.translateCollection(collection).find(query).toArray()
-	},
-	
-	// inserts a single document
-	async insertDocument(collection, document) {
-		return await this.translateCollection(collection).insertOne(document)
-	},
-	
-	// replace a document
-	async replaceDocument(collection, query, content) {
-		await this.translateCollection(collection).replaceOne(query, content)
-	},
-
-	async replaceDocumentById(collection, id, content) {
-		await this.translateCollection(collection).replaceOne({_id: new ObjectId(id)}, content)
-	},
-
-	// inserts multiple documents
-	async insertDocuments(collection, documents) {
-		await this.translateCollection(collection).insertMany(documents)
-	},
-	
-	async updateDocumentById(collection, id, update) {
-		await this.updateDocument(collection, {_id: new ObjectId(id)}, update)
-	},
-
-	/// updates the provided document
-	// @param collection 
-	// @param docuemt query that finds the document to update
-	// @paream update object containing what to update
-	async updateDocument(collection, query, update) {
-		await this.translateCollection(collection).updateOne(query, { $set: update })
-	},
-	
-	async deleteteDocumentById(collection, id) {
-		await this.translateCollection(collection).deleteOne({_id: new ObjectId(id)})
-	},
-
-	async deleteDocuments(collection, query) {
-		await this.translateCollection(collection).deleteMany(query)
+async findAll(collection) {
+	try {
+	  return await this.translateCollection(collection).find({}).toArray();
+	} catch (err) {
+	  throw err;
 	}
+  },
+  
+  // search a document with the matching id in the collection
+  async findOneById(collection, id) {
+	try {
+	  return await this.translateCollection(collection).findOne({ _id: new ObjectId(id) });
+	} catch (err) {
+	  throw err;
+	}
+  },
+  
+  // search a document in the collection via a query
+  async findOneWithQuery(collection, query) {
+	try {
+	  return await this.translateCollection(collection).findOne(query);
+	} catch (err) {
+	  throw err;
+	}
+  },
+  
+  // returns all of the documents who match the query
+  async findWithQuery(collection, query) {
+	try {
+	  return await this.translateCollection(collection).find(query).toArray();
+	} catch (err) {
+	  throw err;
+	}
+  },
+  
+  // inserts a single document
+  async insertDocument(collection, document) {
+	try {
+	  return await this.translateCollection(collection).insertOne(document);
+	} catch (err) {
+	  throw err;
+	}
+  },
+  
+  // replace a document
+  async replaceDocument(collection, query, content) {
+	try {
+	  await this.translateCollection(collection).replaceOne(query, content);
+	} catch (err) {
+	  throw err;
+	}
+  },
+  
+  // replace a document by ID
+  async replaceDocumentById(collection, id, content) {
+	try {
+	  await this.translateCollection(collection).replaceOne({ _id: new ObjectId(id) }, content);
+	} catch (err) {
+	  throw err;
+	}
+  },
+  
+  // inserts multiple documents
+  async insertDocuments(collection, documents) {
+	try {
+	  await this.translateCollection(collection).insertMany(documents);
+	} catch (err) {
+	  throw err;
+	}
+  },
+  
+  // update a document by ID
+  async updateDocumentById(collection, id, update) {
+	try {
+	  await this.updateDocument(collection, { _id: new ObjectId(id) }, update);
+	} catch (err) {
+	  throw err;
+	}
+  },
+  
+  // updates a document with the provided query and update data
+  async updateDocument(collection, query, update) {
+	try {
+	  await this.translateCollection(collection).updateOne(query, { $set: update });
+	} catch (err) {
+	  throw err;
+	}
+  },
+  
+  // delete a document by ID
+  async deleteDocumentById(collection, id) {
+	try {
+	  await this.translateCollection(collection).deleteOne({ _id: new ObjectId(id) });
+	} catch (err) {
+	  throw err;
+	}
+  },
+  
+  // delete multiple documents matching a query
+  async deleteDocuments(collection, query) {
+	try {
+	  await this.translateCollection(collection).deleteMany(query);
+	} catch (err) {
+	  throw err;
+	}
+  }
+  
 }
 
 export { initMongoConnection, closeMongoConnection, dbController }

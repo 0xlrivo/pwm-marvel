@@ -1,6 +1,14 @@
 import { useState } from "react"
+import { useOutletContext } from "react-router-dom"
 
-export default function RegiisterPage() {
+export default function RegisterPage() {
+
+    const [,,,,,setError] = useOutletContext()
+
+    const [username, setUsername] = useState("")
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
+    const [DL, setDL] = useState([])
 
     const searchHeroByNames = async (query) => {
         const options = {
@@ -50,15 +58,16 @@ export default function RegiisterPage() {
         if (resp.ok) {
             window.location.href = 'http://localhost:5173/login'
         } else {
-            console.error("REGISTER FAILED")
+            const msg = await resp.json()
+            setError({
+                show: true,
+                title: "Register Error",
+                msg: msg.message
+            })
         }
     }
 
-    // the React way of handling forms makes use of component state
-    const [username, setUsername] = useState("")
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
-    const [DL, setDL] = useState([])
+    
 
     return (
         <div className="d-flex justify-content-center align-items-center">

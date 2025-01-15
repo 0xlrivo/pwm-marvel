@@ -24,24 +24,42 @@ const userController = {
 	
 	/// registers a new user
 	async registerUser(username, email, password, favoriteHero) {
-		const document = {
-			username: username,
-			email: email,
-			password: password,
-			favoriteHero: favoriteHero,
-			credits: 10
+		try {
+			const document = {
+				username: username,
+				email: email,
+				password: password,
+				favoriteHero: favoriteHero,
+				credits: 10
+			}
+			const op = await dbController.insertDocument(collection, document)
+			await albumController.createAlbum(op.insertedId)
+		} catch (err) {
+			if (err.code == 11000) 
+				throw new Error("Duplicate username or email")
+			else
+				throw new Error("Register failed")
 		}
-		const op = await dbController.insertDocument(collection, document)
-		await albumController.createAlbum(op.insertedId)
 	},
 	
 	/// updates an existing user
 	async updateUser(id, update) {
-		await dbController.updateDocumentById(collection, id, update)
+		try {
+			await dbController.updateDocumentById(collection, id, update)
+		} catch (err) {
+			if (err.code == 11000) 
+				throw new Error("Duplicate username or email")
+			else
+				throw new Error("Profile update failed")
+		}
 	},
 
 	async deleteUser(id) {
-		await dbController.deleteteDocumentById(collection, id)
+		try {
+			await dbController.deleteteDocumentById(collection, id)
+		} catch (err) {
+			throw new Error("Profile deletion failed")
+		}
 	},
 	
 	// add credits to a specific user

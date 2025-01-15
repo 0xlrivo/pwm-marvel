@@ -17,15 +17,18 @@ router.post('/register', async(req, res) => {
 	const email = req.body.email;
 	let password = req.body.password;
 	const favoriteHero = req.body.favoriteHero;
-	console.log("registering " + username + " " + favoriteHero)
 	if (!username || !email || !password || !favoriteHero) {
 		res.status(400).json()
 	}
 	else {
 		const hash = crypto.createHash('sha256')
 		password = hash.update(password).digest('hex')
-		await userController.registerUser(username, email, password, favoriteHero)
-		res.status(201).json({"message": "user registered"})
+		try {
+			await userController.registerUser(username, email, password, favoriteHero)
+			res.status(201).json({"message": "user registered"})
+		} catch (err) {
+			res.status(400).json({"message": err.message})
+		}
 	}
 })
 
@@ -65,14 +68,23 @@ router.put('/editProfile', authenticateRoute, async(req, res) => {
 		const hash = crypto.createHash('sha256')
 		req.body.password = hash.update(req.body.password).digest('hex');
 	}
-	await userController.updateUser(userId, req.body)
-	res.status(201).json({"message": "user updated"})
+	try {
+		await userController.updateUser(userId, req.body)
+		res.status(201).json({"message": "user updated"})
+	} catch (err) {
+		res.status(400).json({"message": err.message})
+	}
 })
 
 router.delete('/deleteProfile', authenticateRoute, async(req, res) => {
 	const userId = req.user.id; // JWT
-	await userController.deleteUser(userId)
-	res.status(200).json({"message": "user deleted"})
+	try {
+		await userController.deleteUser(userId)
+		res.status(200).json({"message": "user deleted"})
+	} catch (err) {
+		res.status(400).json({"message": err.message})
+	}
+	
 })
 
 module.exports = router

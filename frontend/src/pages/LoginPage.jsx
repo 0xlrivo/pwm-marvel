@@ -1,6 +1,13 @@
 import { useState } from "react"
+import { useOutletContext } from "react-router-dom"
 
 export default function LoginPage() {
+
+    const [,,,,,setError] = useOutletContext()
+
+    // the React way of handling forms makes use of component state
+    const [username, setUsername] = useState("")
+    const [password, setPassword] = useState("")
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -28,13 +35,14 @@ export default function LoginPage() {
            // redirect to the home page to issue a reload
            window.location.href = 'http://localhost:5173/'
         } else {
-            console.error("LOGIN FAILED")
+            const msg = await resp.json()
+            setError({
+                show: true,
+                title: "Login Error",
+                msg: msg.message
+            })
         }
     }
-
-    // the React way of handling forms makes use of component state
-    const [username, setUsername] = useState("")
-    const [password, setPassword] = useState("")
 
     return (
         <div className="d-flex justify-content-center align-items-center">

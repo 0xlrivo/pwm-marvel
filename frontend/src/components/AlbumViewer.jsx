@@ -1,6 +1,6 @@
 import HeroCard from "./HeroCard"
 
-export default function AlbumViewer({ albumId, pagination }) {
+export default function AlbumViewer({ pagination }) {
 
     return (
         <div className="row row-cols-1 row-cols-md-5 g-4">
