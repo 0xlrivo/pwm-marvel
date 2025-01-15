@@ -31,9 +31,15 @@ export default function SellCardsTable({ cards }) {
                         {
                             cards.map((card, idx) => (
                                 <tr key={idx}>
-                                    <td><img src={`${card.thumbnail.path}.${card.thumbnail.extension}`} width={200} height={200} alt={card.name} /></td>
-                                    <td>{card.name}</td>
-                                    <td><button className="btn btn-success" onClick={() => sellCard(card.id)}>SELL</button></td>
+                                    <td>
+                                        <img src={`${card.thumbnail.path}.${card.thumbnail.extension}`} width={200} height={200} alt={card.name} />
+                                    </td>
+                                    <td>
+                                        <h5 style={{marginTop: "5em"}}>{card.name}</h5>
+                                    </td>
+                                    <td>
+                                        <button className="btn btn-success" style={{marginTop: "5em"}} onClick={() => sellCard(card.id)}>SELL</button>
+                                    </td>
                                 </tr>
                             ))
                         }

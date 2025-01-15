@@ -19,6 +19,7 @@ export default function HeroDetailModal({ show, onClose, title, card }) {
         if (response.ok) {
             response = await response.json();
             setAdditionalData({
+                description: response.description,
                 comics: response.comics,
                 stories: response.stories,
                 series: response.series
@@ -51,7 +52,7 @@ export default function HeroDetailModal({ show, onClose, title, card }) {
                                     <h5 className="text-dark">Description</h5>
                                     <textarea
                                         className="form-control"
-                                        value={card.description} 
+                                        value={additionalData ? additionalData.description : ""} 
                                         readOnly
                                         rows="3"
                                     ></textarea>
