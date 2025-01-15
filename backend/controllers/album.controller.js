@@ -60,10 +60,10 @@ const albumController = {
 			if (album.cards.indexOf(id) === -1) {
 				// new cards, so add it to the album
 				album.cards.push(id)
-				content.push({"id": id, "isDuplicate": false})
+				content.push({...generatedCharacters[i], isDuplicate: false})
 			} else {
 				// duplicate cards, don't add it
-				content.push({"id": id, "isDuplicate": true})
+				content.push({...generatedCharacters[i], isDuplicate: true})
 			}
 		}
 		

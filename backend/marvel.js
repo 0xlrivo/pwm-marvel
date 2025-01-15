@@ -54,7 +54,7 @@ const baseMarvelRequest = async (route, params) => {
 
 const marvelController = {
 
-	async getCharacterById(id) {
+	async getCharacterById(id, fullData) {
 		try {
 			let resp
 			// check if this id is cached
@@ -70,13 +70,39 @@ const marvelController = {
 				hero_cache.set(id, resp)
 				console.log("first time requesting hero " + id)
 			}
-			
-			// return only relevant data
-			return {
-				id: resp.id,
-				name: resp.name,
-				description: resp.description,
-				thumbnail: resp.thumbnail
+
+			if (!fullData) {
+				// return only essential things
+				return {
+					id: resp.id,
+					name: resp.name,
+					thumbnail: resp.thumbnail
+				}
+			} else {
+				return {
+					id: resp.id,
+					name: resp.name,
+					description: resp.description,
+					thumbnail: resp.thumbnail,
+					comics: {
+						number: resp.comics.available,
+						items: resp.comics.items.map((c) => {
+							return c.name
+						})
+					},
+					stories: {
+						number: resp.stories.available,
+						items: resp.stories.items.map((s) => {
+							return s.name
+						})
+					},
+					series: {
+						number: resp.series.available,
+						items: resp.series.items.map((s) => {
+							return s.name
+						})
+					}
+				}
 			}
 
 		} catch (err) {

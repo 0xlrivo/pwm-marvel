@@ -10,7 +10,7 @@ export default function SellCardsTable({ cards }) {
         }
         const response = await fetch("http://localhost:3000/api/album/sellCard/" + cardId, options)
         if (response.ok) {
-            window.location.href = "http://localhost:5173/"
+            window.location.href = "http://localhost:5173/shop"
         } else {
             console.error(await response.json())
         }

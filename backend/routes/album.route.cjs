@@ -15,11 +15,12 @@ router.get('/getAlbumOf/:id', async (req, res) => {
 	}
 })
 
-// calls underlying Marvel API to get a single charactter data from his id
-router.get('/getCharacterById/:id', async (req, res) => {
+// calls underlying Marvel API to get a single charactter data from his id (/id/full to get more data)
+router.get('/getCharacterById/:id/:full?', async (req, res) => {
 	try {
-		const id = req.params.id;
-		const character = await marvelController.getCharacterById(id)
+		const { id, full } = req.params
+		console.log(full)
+		const character = await marvelController.getCharacterById(id, full)
 		res.status(200).json(character)
 	} catch (err) {
 		console.log(err)
