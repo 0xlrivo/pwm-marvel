@@ -5,7 +5,7 @@ import TradeRow from "../components/TradeRow";
 
 export default function TradePage() {
 
-  const [,user,,pagination,setError] = useOutletContext();
+  const [,user,,pagination,] = useOutletContext();
   const [trades, setTrades] = useState([]);
 
   const fetchUnfilledTrades = async () => {
@@ -16,7 +16,7 @@ export default function TradePage() {
       },
     };
     const resp = await fetch(
-      "http://localhost:3000/api/order/getAllUnfilledOrders",
+      "http://localhost:3000/api/order/getAllOrders",
       options
     );
     if (resp.ok) {
@@ -54,7 +54,6 @@ export default function TradePage() {
                   offer={t.offer}
                   request={t.request}
                   cardsOwned={pagination.cards.map((i) => { return i.id })} // only pass ids
-                  setError={setError}
                 />
               );
             })}
@@ -63,7 +62,7 @@ export default function TradePage() {
       </div>
 
       {/* Trade Control Bar */}
-      <TradeControlBar user={user} cards={pagination.cards} setError={setError} />
+      <TradeControlBar user={user} cards={pagination.cards}/>
     </>
   )
 }

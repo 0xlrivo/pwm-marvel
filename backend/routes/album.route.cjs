@@ -58,7 +58,6 @@ router.post('/getCharactersByIds', async (req, res) => {
 		const characters = await marvelController.getCharactersByIds(ids)
 		res.status(200).json(characters)
 	} catch (err) {
-		console.log(err)
 		res.status(500).json()
 	}
 })
@@ -69,7 +68,7 @@ router.post('/openPacket', authenticateRoute, async (req, res) => {
 		const packetContent = await albumController.openPacket(owner)
 		res.status(200).json(packetContent)
 	} catch (err) {
-		res.status(500).json(err)
+		res.status(500).json({"message": err.message})
 	}
 })
 

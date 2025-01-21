@@ -13,16 +13,6 @@ router.get('/getAllOrders', async(req, res) => {
 	}
 })
 
-router.get('/getAllUnfilledOrders', async(req, res) => {
-	try {
-		const orders = await orderController.gettAllUnfilledOrders()
-		res.status(200).json(orders)
-	} catch (err) {
-		console.log(err)
-		res.status(500).json()
-	}
-})
-
 // [PROTECTED]
 router.put('/createOrder', authenticateRoute, async(req, res) => {
 	try {

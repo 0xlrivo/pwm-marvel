@@ -39,6 +39,12 @@ const albumController = {
 		await dbController.updateDocumentById(collection, id, update)
 	},
 
+	async deleteAlbumOf(ownerId) {
+		const target = await this.getAlbumOwnedBy(ownerId)
+		if (target._id)
+			await dbController.deleteDocumentById(collection, target._id)
+	},
+
 	async replaceAlbum(id, update) {
 		await dbController.replaceDocumentById(collection, id, update)
 	},
@@ -48,8 +54,13 @@ const albumController = {
 		//const recipient = await userController.getUserById(recipientId)
 		const album = await this.getAlbumOwnedBy(recipientId)
 		
-		// throws if the user doesn't have enough credits @todo refactor to scale this at the end if the rest fails
-		await userController.checkAndScaleCredits(recipientId, 1)
+		try {
+			// throws if the user doesn't have enough credits
+			await userController.checkAndScaleCredits(recipientId, 1)
+		} catch (err) {
+			throw err
+		}
+		
 		
 		const generatedCharacters = await marvelController.getRandomCharacters(5)
 		console.log(generatedCharacters)

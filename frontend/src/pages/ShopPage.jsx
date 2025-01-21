@@ -19,6 +19,9 @@ export default function ShopPage() {
         const response = await fetch("http://localhost:3000/api/user/buyCredits", options);
         if (response.ok) {
             window.location.href = "http://localhost:5173/";
+        } else {
+            const msg = (await response.json()).message
+            window.alert(msg ? msg : "an error occurred")
         }
     };
 
@@ -35,6 +38,9 @@ export default function ShopPage() {
             const content = await resp.json();
             setPacketContent(content);
             setShowModal(true);
+        } else {
+            const msg = (await resp.json()).message
+            window.alert(msg)
         }
     };
 

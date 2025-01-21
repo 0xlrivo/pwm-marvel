@@ -18,7 +18,7 @@ router.post('/register', async(req, res) => {
 	let password = req.body.password;
 	const favoriteHero = req.body.favoriteHero;
 	if (!username || !email || !password || !favoriteHero) {
-		res.status(400).json()
+		res.status(400).json({"message": "invalid user input"})
 	}
 	else {
 		const hash = crypto.createHash('sha256')
@@ -36,7 +36,7 @@ router.post('/login', async(req, res) => {
 	const username = req.body.username;
 	const password = req.body.password;
 	if (!username || !password) {
-		res.status(400).json()
+		res.status(400).json({"message": "invalid user input"})
 	}
 	else {
 		const user = await userController.getUserByUsername(username)
@@ -82,6 +82,7 @@ router.delete('/deleteProfile', authenticateRoute, async(req, res) => {
 		await userController.deleteUser(userId)
 		res.status(200).json({"message": "user deleted"})
 	} catch (err) {
+		console.error(err.message)
 		res.status(400).json({"message": err.message})
 	}
 	

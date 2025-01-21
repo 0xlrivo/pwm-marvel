@@ -3,6 +3,14 @@ import { useOutletContext } from "react-router-dom";
 
 export default function ProfilePage() {
 
+    const [isLogged, user, setUser, ,] = useOutletContext();
+
+    const [username, setUsername] = useState(user.username);
+    const [email, setEmail] = useState(user.email);
+    const [password, setPassword] = useState("");
+    const [favHero, setFavHero] = useState(user.favoriteHero);
+    const [DL, setDL] = useState([]);
+
     const getFavHeroName = async () => {
         const options = {
             method: "GET",
@@ -22,32 +30,32 @@ export default function ProfilePage() {
 
     const searchHeroByNames = async (query) => {
         const options = {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
-            Accept: `application/json`,
-          },
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
+                Accept: `application/json`,
+            },
         };
-    
+
         let response = await fetch(
-          `http://localhost:3000/api/album/getCharactersByName/${query}`,
-          options
+            `http://localhost:3000/api/album/getCharactersByName/${query}`,
+            options
         );
         if (response.ok) {
-          response = await response.json();
-          setDL(
-            response.map((i) => {
-              return { id: i.id, name: i.name };
-            })
-          );
+            response = await response.json();
+            setDL(
+                response.map((i) => {
+                    return { id: i.id, name: i.name };
+                })
+            );
         } else {
-          console.error(await response.json());
+            console.error(await response.json());
         }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         let body = {
             username,
             email,
@@ -74,12 +82,29 @@ export default function ProfilePage() {
 
         const resp = await fetch('http://localhost:3000/api/user/editProfile', options);
         if (resp.ok) {
-            window.location.href = 'http://localhost:5173/';
+            window.location.href = 'http://localhost:5173/'
         } else {
-            console.log("LOGIN FAILED");
-            console.error(await resp.json());
+            const msg = (await resp.json()).message
+            window.alert(msg)
         }
     };
+
+    const deleteProfile = async () => {
+        const options = {
+            method: 'DELETE',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('auth-token'),
+            }
+        };
+        
+        try {
+            const response = await fetch('http://localhost:3000/api/user/deleteProfile', options);
+        } catch (e) {
+            window.alert("profile deleted")
+            localStorage.removeItem('auth-token');
+        }
+    };
+    
 
     useEffect(() => {
         const fetchFavoriteHero = async () => {
@@ -89,18 +114,12 @@ export default function ProfilePage() {
         fetchFavoriteHero();
     }, []);
 
-    const [, user, setUser, ,] = useOutletContext();
-
-    const [username, setUsername] = useState(user.username);
-    const [email, setEmail] = useState(user.email);
-    const [password, setPassword] = useState("");
-    const [favHero, setFavHero] = useState(user.favoriteHero);
-    const [DL, setDL] = useState([]);
+    if (!isLogged) return <h1>Login first to edit your profile</h1>
 
     return (
         <div className="d-flex justify-content-center align-items-center">
-            <form 
-                onSubmit={handleSubmit} 
+            <form
+                onSubmit={handleSubmit}
                 className="p-4 bg-white rounded shadow"
                 style={{ width: '400px', marginTop: '20vh' }}
             >
@@ -164,7 +183,8 @@ export default function ProfilePage() {
                 </div>
 
                 {/* Update Button */}
-                <button type="submit" className="btn btn-danger w-100">Update Profile</button>
+                <button type="submit" className="btn btn-primary w-100">Update Profile</button>
+                <button type="submit" className="btn btn-danger w-100 mt-2" onClick={async () => { await deleteProfile() }}>Delete Profile</button>
             </form>
         </div>
     );

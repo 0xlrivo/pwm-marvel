@@ -29,11 +29,6 @@ const orderController = {
 	async getAllOrder() {
 		return await dbController.findAll(collection)
 	},
-	
-	// returns all of the active orders waiting for a filler
-	async gettAllUnfilledOrders() {
-		return await dbController.findWithQuery(collection, {fillerId: null})
-	},
 
 	async getOrderById(id) {
 		return await dbController.findOneById(collection, id)
@@ -44,22 +39,13 @@ const orderController = {
 		return await dbController.findWithQuery(collection, {creatorId: new ObjectId(userId)})
 	},
 	
-	// returns all of the orders filled by userId
-	async getOrdersFilledBy(userId) {
-		return await dbController.findWithQuery(collection, {fillerId: new ObjectId(userId)})
-	},
-	
 	// creates a new order
 	// @param creatorId id of the user that is creatting the order
 	// @param offer the offer made by the creator (cards, credits)
 	// @param request what cards/credits the creator expects from the filler
 	async createOrder(creatorId, offer, request) {
-
 		const creator = userController.getUserById(creatorId)
 		const creatorAlbum = await albumController.getAlbumOwnedBy(creatorId)
-
-		console.log(offer)
-		console.log(request)
 
 		// creator must have enough credits
 		if (offer.credits > 0 && creator.credits < offer.credits) {
@@ -95,7 +81,6 @@ const orderController = {
 		// Order state update
 		const order = {
 			creatorId: creatorId,
-			fillerId: null,
 			offer: offer,
 			request: request
 		}
@@ -110,9 +95,6 @@ const orderController = {
 		// input validation
 		if (!order) {
 			throw new Error("Order don't exists")
-		}
-		if (order.fillerId !== null) {
-			throw new Error("Order already filled")
 		}
 		if (order.creatorId === fillerId) {
 			throw new Error("Cannot fill your own orders")
@@ -150,19 +132,20 @@ const orderController = {
 			}
 		}
 		
-		// assert filler has enough credits
-		// (if this fails no state is writted after)
-		await userController.checkAndScaleCredits(fillerId, order.request.credits) // @todo non funziona bene l'aggiunta di crediti al filler
-		
 		// add the offer credits to the filler
 		await userController.addCreditsTo(fillerId, order.offer.credits)
+		// assert filler has enough credits
+		await userController.checkAndScaleCredits(fillerId, order.request.credits)
+
+		// add request credits to the creator
+		await userController.addCreditsTo(order.creatorId, order.request.credits)
 
 		// update the albums
 		await albumController.replaceAlbum(creatorAlbum._id, creatorAlbum)
 		await albumController.replaceAlbum(fillerAlbum._id, fillerAlbum)
 		
-		// mark the order as filled
-		await dbController.updateDocumentById(collection, orderId, {fillerId: fillerId})
+		// remove the order from database
+		await dbController.deleteDocumentById(collection, order._id)
 	},
 
 	// allwows the owner of an order to delete it

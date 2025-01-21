@@ -1,9 +1,6 @@
 import { useState } from "react"
-import { useOutletContext } from "react-router-dom"
 
 export default function LoginPage() {
-
-    const [,,,,,setError] = useOutletContext()
 
     // the React way of handling forms makes use of component state
     const [username, setUsername] = useState("")
@@ -32,15 +29,13 @@ export default function LoginPage() {
            // save the auth JWT token in local storage
            localStorage.setItem('auth-token', content.token)
 
+           // @todo setLogged da cambiare qui ?
+
            // redirect to the home page to issue a reload
            window.location.href = 'http://localhost:5173/'
         } else {
-            const msg = await resp.json()
-            setError({
-                show: true,
-                title: "Login Error",
-                msg: msg.message
-            })
+            const msg = (await resp.json()).message
+            window.alert(msg)
         }
     }
 

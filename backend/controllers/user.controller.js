@@ -56,6 +56,9 @@ const userController = {
 
 	async deleteUser(id) {
 		try {
+			// delete user album
+			await albumController.deleteAlbumOf(id)
+			// delete user
 			await dbController.deleteDocumentById(collection, id)
 		} catch (err) {
 			throw new Error("Profile deletion failed")
@@ -64,7 +67,7 @@ const userController = {
 	
 	// add credits to a specific user
 	async addCreditsTo(id, credits) {
-		if (!credits) return
+		if (!credits || credits == 0) return
 		const user = await this.getUserById(id)
 		await dbController.updateDocumentById(
 			collection,
@@ -75,7 +78,7 @@ const userController = {
 
 	// checks if such user has enough credits for the operation and then scales them
 	async checkAndScaleCredits(id, requiredCredits) {
-		if (!requiredCredits) return
+		if (!requiredCredits || requiredCredits == 0) return
 		const user = await this.getUserById(id)
 		if (user.credits >= requiredCredits) {
 			await dbController.updateDocumentById(

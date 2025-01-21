@@ -7,7 +7,6 @@ import LoginPage from './pages/LoginPage.jsx'
 import TradePage from './pages/TradePage.jsx'
 import ProfilePage from './pages/ProfilePage.jsx'
 import RegisterPage from './pages/RegisterPage.jsx'
-import ErrorToast from './components/ErrorToast.jsx'
 
 export default function App() {
 
@@ -26,13 +25,6 @@ export default function App() {
 		cards: []
 	})
 
-	// Error State
-	const [error, setError] = useState({
-		show: false,
-		title: '',
-		msg: ''
-	})
-
 	return (
 		<>
 			<BrowserRouter>
@@ -44,7 +36,6 @@ export default function App() {
 							setUser={setUser}
 							pagination={pagination}
 							setPagination={setPagination}
-							setError={setError}
 						/>
 					}>
 						<Route index element={<Home />} />
@@ -56,7 +47,6 @@ export default function App() {
 					</Route>
 				</Routes>
 			</BrowserRouter>
-			<ErrorToast error={error} setError={setError}/>
 		</>
 	)
 }

@@ -1,6 +1,6 @@
 import CreateTradeModal from "./CreateTradeModal";
 
-export default function TradePage({ user, cards, setError }) {
+export default function TradePage({ user, cards }) {
   
   const buyCredits = async () => {
     const options = {
@@ -43,7 +43,7 @@ export default function TradePage({ user, cards, setError }) {
         </div>
 
       </div>
-      <CreateTradeModal credits={user ? user.credits : 0} cards={cards} setError={setError} />
+      <CreateTradeModal credits={user ? user.credits : 0} cards={cards} />
     </>
   );
 }

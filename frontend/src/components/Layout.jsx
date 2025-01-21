@@ -9,7 +9,6 @@ export default function Layout({
   setUser,
   pagination,
   setPagination,
-  setError
 }) {
 
   const parseJwt = () => {
@@ -70,7 +69,7 @@ export default function Layout({
       </header>
       <main className="layout-main container-fluid">
         <Outlet
-          context={[isLogged, user, setUser, pagination, setPagination, setError]}
+          context={[isLogged, user, setUser, pagination, setPagination]}
         />
       </main>
     </div>

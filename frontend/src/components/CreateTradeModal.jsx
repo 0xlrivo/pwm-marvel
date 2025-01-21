@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function CreateTradeModal({ credits, cards, setError }) {
+export default function CreateTradeModal({ credits, cards }) {
 
   const [creditsOut, setCreditsOut] = useState(0);
   const [creditsIn, setCreditsIn] = useState(0);
@@ -90,15 +90,12 @@ export default function CreateTradeModal({ credits, cards, setError }) {
       options
     );
     if (!response.ok) {
+      const msg = (await resp.json()).message
+      window.alert(msg)
       clearForm()
-      const msg = await response.json()
-      setError({
-        show: true,
-        title: "Create Trade Error",
-        msg: msg.message
-      })
+    } else {
+      window.location.href = "http://localhost:5173/trade"
     }
-    window.location.href = "http://localhost:5173/trade"
   };
 
   return (

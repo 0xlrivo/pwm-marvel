@@ -9,33 +9,16 @@ export default function TradeRow({
   cardsOwned
 }) {
 
+  const [creator, setCreator] = useState("");
+  const [offerData, setOfferData] = useState([]);
+  const [requestData, setRequestData] = useState([]);
+
   const canFillTrade = () => {
     for (let i = 0; i < request.cards.length; i++) {
       if (cardsOwned.indexOf(request.cards[i]) === -1) return false;
     }
     return true
   }
-
-  const fillTrade = async () => {
-    const options = {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "http://localhost:5173",
-        "Access-Control-Allow-Credentials": "true",
-      },
-    };
-    const response = await fetch(
-      `http://localhost:3000/api/order/fillOrder/${tradeId}`,
-      options
-    );
-    if (response.ok) {
-      window.location.href = "http://localhost:5173/";
-    } else {
-      console.error(response.json());
-    }
-  };
 
   const fetchTradeData = async (cards, setter) => {
     const options = {
@@ -82,6 +65,29 @@ export default function TradeRow({
     }
   };
 
+  const fillTrade = async () => {
+    const options = {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "http://localhost:5173",
+        "Access-Control-Allow-Credentials": "true",
+      },
+    };
+    const response = await fetch(
+      `http://localhost:3000/api/order/fillOrder/${tradeId}`,
+      options
+    );
+    if (response.ok) {
+      window.alert("trade filled")
+      window.location.href = "http://localhost:5173/";
+    } else {
+      const msg = (await response.json()).message
+      window.alert(msg)
+    }
+  };
+
   const deleteTrade = async () => {
     const options = {
       method: "DELETE",
@@ -94,15 +100,13 @@ export default function TradeRow({
       options
     );
     if (response.ok) {
+      window.alert("trade deleted")
       window.location.href = "http://localhost:5173/trade";
     } else {
-      console.error(response.json());
+      const msg = (await response.json()).message
+      window.alert(msg)
     }
   };
-
-  const [creator, setCreator] = useState("");
-  const [offerData, setOfferData] = useState([]);
-  const [requestData, setRequestData] = useState([]);
 
   useEffect(() => {
     fetchCreatorUsername()

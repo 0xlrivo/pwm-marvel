@@ -1,14 +1,19 @@
 import { useState } from "react"
-import { useOutletContext } from "react-router-dom"
 
 export default function RegisterPage() {
-
-    const [,,,,,setError] = useOutletContext()
 
     const [username, setUsername] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [DL, setDL] = useState([])
+
+    const clearForm = () => {
+        setUsername("")
+        setEmail("")
+        setPassword("")
+        setDL([])
+        document.getElementById("inputFavoriteHero").value = ""
+    }
 
     const searchHeroByNames = async (query) => {
         const options = {
@@ -58,15 +63,11 @@ export default function RegisterPage() {
         if (resp.ok) {
             window.location.href = 'http://localhost:5173/login'
         } else {
-            const msg = await resp.json()
-            setError({
-                show: true,
-                title: "Register Error",
-                msg: msg.message
-            })
+            const msg = (await resp.json()).message
+            window.alert(msg)
+            clearForm()
         }
     }
-
     
 
     return (
